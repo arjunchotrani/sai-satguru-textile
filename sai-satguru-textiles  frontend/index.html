@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sai Satguru Textile</title>
+  <script>
+    // Tailwind config moved to tailwind.config.js
+  </script>
+
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://api.yourdomain.com" crossorigin>
+  <link rel="preconnect" href="https://wsrv.nl" crossorigin>
+
+  <!-- Preload critical assets -->
+  <link rel="modulepreload" href="/index.tsx">
+
+  <!-- Preload critical fonts for speed - MATCHED EXACTLY WITH STYLESHEET -->
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Manrope:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="/index.css">
+
+  <script>
+    // Robust Splash Suppression: Instantly hide static splash if already seen in this session
+    (function () {
+      if (sessionStorage.getItem('sst_logo_shown')) {
+        document.documentElement.classList.add('splash-hidden');
+      }
+    })();
+  </script>
+
+  <style>
+    /* Instant Suppression via Class */
+    .splash-hidden #static-splash {
+      display: none !important;
+    }
+
+    /* CSS for Static Splash Screen (Instant Paint) */
+    #static-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #static-splash.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient gold glow */
+    .static-ambient-glow {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255, 215, 0, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Subtle floating particles */
+    .static-particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .static-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 215, 0, 0.3);
+      border-radius: 50%;
+      animation: float-particle 3s ease-in-out infinite;
+    }
+
+    .static-particle:nth-child(1) {
+      left: 20%;
+      top: 30%;
+      animation-delay: 0s;
+      animation-duration: 2.5s;
+    }
+
+    .static-particle:nth-child(2) {
+      left: 70%;
+      top: 20%;
+      animation-delay: 0.5s;
+      animation-duration: 3s;
+    }
+
+    .static-particle:nth-child(3) {
+      left: 40%;
+      top: 70%;
+      animation-delay: 1s;
+      animation-duration: 2.8s;
+    }
+
+    .static-particle:nth-child(4) {
+      left: 80%;
+      top: 60%;
+      animation-delay: 1.5s;
+      animation-duration: 3.2s;
+    }
+
+    .static-particle:nth-child(5) {
+      left: 15%;
+      top: 80%;
+      animation-delay: 0.8s;
+      animation-duration: 2.6s;
+    }
+
+    .static-particle:nth-child(6) {
+      left: 60%;
+      top: 45%;
+      animation-delay: 1.2s;
+      animation-duration: 3.4s;
+    }
+
+    @keyframes float-particle {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 0;
+      }
+
+      50% {
+        transform: translateY(-20px) scale(1.5);
+        opacity: 1;
+      }
+    }
+
+    /* Logo container */
+    .static-logo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    #static-logo {
+      width: 80px;
+      height: 80px;
+      color: #FFD700;
+      opacity: 0;
+      animation: static-fade-in 0.8s ease-out 0.1s forwards;
+    }
+
+    /* "Welcome to" text */
+    .static-welcome {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.4rem;
+      color: rgba(255, 215, 0, 0.85);
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: static-slide-up 0.7s ease-out 0.2s forwards;
+    }
+
+    /* Brand name */
+    .static-brand-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      color: white;
+      font-weight: 600;
+      margin-top: 1.2rem;
+      line-height: 1.3;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: static-slide-up 0.8s ease-out 0.4s forwards;
+    }
+
+    .static-brand-sub {
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 0.45em;
+      color: rgba(255, 215, 0, 0.7);
+      font-weight: 300;
+      margin-top: 0.5rem;
+    }
+
+    /* Glow ring around logo */
+    .static-glow-ring {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 215, 0, 0.08);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      animation: static-glow-pulse 2s ease-in-out 0.5s infinite;
+    }
+
+    .static-glow-ring-2 {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 215, 0, 0.04);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      animation: static-glow-pulse 2s ease-in-out 0.8s infinite;
+    }
+
+    @keyframes static-glow-pulse {
+
+      0%,
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    /* Progress bar — premium shimmer */
+    .static-progress-container {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+      border-radius: 2px;
+      opacity: 0;
+      animation: static-fade-in 0.5s ease-out 0.6s forwards;
+    }
+
+    .static-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.6), rgba(255, 215, 0, 0.2));
+      width: 0%;
+      border-radius: 2px;
+      animation: static-loading 2s ease-in-out forwards;
+      background-size: 200% 100%;
+    }
+
+    /* Tagline at very bottom */
+    .static-tagline {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Manrope', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+      white-space: nowrap;
+      opacity: 0;
+      animation: static-fade-in 0.5s ease-out 1s forwards;
+    }
+
+    @keyframes static-loading {
+      0% {
+        width: 0%;
+      }
+
+      100% {
+        width: 100%;
+      }
+    }
+
+    @keyframes static-fade-in {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes static-slide-up {
+      0% {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes static-draw {
+      0% {
+        stroke-dashoffset: 1000;
+      }
+
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .draw-anim {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: static-draw 2s ease-in-out forwards;
+    }
+
+    /* Mobile-first responsive adjustments */
+    @media (min-width: 768px) {
+      #static-logo {
+        width: 120px;
+        height: 120px;
+      }
+
+      .static-welcome {
+        font-size: 2rem;
+      }
+
+      .static-brand-name {
+        font-size: 2.5rem;
+        letter-spacing: 0.2em;
+      }
+
+      .static-brand-sub {
+        font-size: 0.75rem;
+        letter-spacing: 0.5em;
+      }
+
+      .static-glow-ring {
+        width: 180px;
+        height: 180px;
+      }
+
+      .static-glow-ring-2 {
+        width: 240px;
+        height: 240px;
+      }
+
+      .static-progress-container {
+        width: 192px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <!-- Static Splash Screen - Removed by React when ready -->
+    <div id="static-splash">
+      <!-- Ambient Background Glow -->
+      <div class="static-ambient-glow"></div>
+
+      <!-- Floating Particles -->
+      <div class="static-particles">
+        <div class="static-particle"></div>
+        <div class="static-particle"></div>
+        <div class="static-particle"></div>
+        <div class="static-particle"></div>
+        <div class="static-particle"></div>
+        <div class="static-particle"></div>
+      </div>
+
+      <div class="static-logo-wrap">
+        <!-- Welcome Text -->
+        <div class="static-welcome">Welcome to</div>
+
+        <!-- Logo with glow rings -->
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+          <div class="static-glow-ring"></div>
+          <div class="static-glow-ring-2"></div>
+          <svg id="static-logo" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="50" cy="12" rx="3.5" ry="6" fill="#FFD700" />
+            <path d="M 35 24 Q 50 20 65 24" class="draw-anim" style="animation-delay: 0.2s" />
+            <path d="M 32 30 Q 50 26 68 30" class="draw-anim" style="animation-delay: 0.4s" />
+            <path d="M 35 36 Q 50 32 65 36" class="draw-anim" style="animation-delay: 0.6s" />
+            <circle cx="50" cy="48" r="4" fill="#FFD700" />
+            <path d="M 42 45 C 30 40, 10 35, 15 60 C 18 68, 28 60, 38 65" class="draw-anim"
+              style="animation-delay: 0.8s" />
+            <path d="M 58 45 C 75 35, 95 45, 85 65 C 75 85, 55 70, 50 85 C 45 98, 30 90, 35 80" class="draw-anim"
+              style="animation-delay: 1s" />
+          </svg>
+        </div>
+
+        <!-- Brand Name -->
+        <div class="static-brand-name">
+          Sai Satguru
+          <span class="static-brand-sub">Textile</span>
+        </div>
+      </div>
+
+      <!-- Premium Progress Bar -->
+      <div class="static-progress-container">
+        <div class="static-progress-bar"></div>
+      </div>
+
+      <!-- Tagline -->
+      <div class="static-tagline">Premium Textile Solutions</div>
+    </div>
+  </div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

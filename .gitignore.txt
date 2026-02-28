@@ -1,0 +1,17 @@
+# General
+node_modules/
+dist/
+dist-ssr/
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.production
+.dev.vars
+.dev.vars.*

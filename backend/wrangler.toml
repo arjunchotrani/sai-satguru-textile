@@ -1,0 +1,19 @@
+name = "sai-satguru-backend"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = [ "nodejs_compat" ]
+
+
+[vars]
+ALLOWED_ORIGINS = "" # Comma-separated list of production URLs 
+
+# User manages KV bindings via Dashboard (CACHE_KV)
+# ⚠️ REQUIRED FOR LOCAL DEV: Wrangler needs this binding to know CACHE_KV exists locally.
+# The ID can be a placeholder for local development, but needs to be real for --remote.
+[[kv_namespaces]]
+binding = "CACHE_KV"
+id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # Replace with 'sai-satguru-kv' ID from dashboard
+preview_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+
+
