@@ -18,8 +18,12 @@ import { getCache, setCache, CACHE_TTL } from "../utils/cache";
 subcategoriesRoutes.get("/", async (c) => {
   // 1️⃣ Try Cache
   const cached = await getCache(c.env, "subcategories:list");
-  if (cached) {
+  const isAdmin = c.req.path.startsWith("/admin");
+  if (cached && !isAdmin) {
     c.header("Cache-Control", "public, s-maxage=3600");
+    return c.json({ success: true, data: cached });
+  } else if (cached && isAdmin) {
+    c.header("Cache-Control", "no-cache, no-store, must-revalidate");
     return c.json({ success: true, data: cached });
   }
 
@@ -58,7 +62,11 @@ subcategoriesRoutes.get("/", async (c) => {
     setCache(c.env, "subcategories:list", formatted, CACHE_TTL.MEDIUM)
   );
 
-  c.header("Cache-Control", "public, s-maxage=3600");
+  if (!isAdmin) {
+    c.header("Cache-Control", "public, s-maxage=3600");
+  } else {
+    c.header("Cache-Control", "no-cache, no-store, must-revalidate");
+  }
   return c.json({ success: true, data: formatted });
 });
 

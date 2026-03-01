@@ -414,7 +414,6 @@ const Categories: React.FC = () => {
                   Creation Date (Admin Only)
                 </label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                   <input
                     type="datetime-local"
                     value={
@@ -428,7 +427,7 @@ const Categories: React.FC = () => {
                         created_at: new Date(e.target.value).toISOString(),
                       })
                     }
-                    className="w-full pl-10 pr-4 p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm md:text-base"
                   />
                 </div>
                 <p className="text-xs text-slate-400 mt-1">

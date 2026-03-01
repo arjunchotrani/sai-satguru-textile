@@ -32,8 +32,13 @@ productsRoutes.get("/", async (c) => {
   // 1️⃣ Cache Key Generation
   const cacheKey = `products:list:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}`;
 
+  const isAdmin = c.req.path.startsWith("/admin");
   const cached = await getCache(c.env, cacheKey);
-  if (cached) {
+  if (cached && !isAdmin) {
+    c.header("Cache-Control", "public, s-maxage=60");
+    return c.json(cached);
+  } else if (cached && isAdmin) {
+    c.header("Cache-Control", "no-cache, no-store, must-revalidate");
     return c.json(cached);
   }
 
@@ -159,7 +164,11 @@ productsRoutes.get("/", async (c) => {
     setCache(c.env, cacheKey, response, CACHE_TTL.SHORT)
   );
 
-  c.header("Cache-Control", "public, s-maxage=60");
+  if (!isAdmin) {
+    c.header("Cache-Control", "public, s-maxage=60");
+  } else {
+    c.header("Cache-Control", "no-cache, no-store, must-revalidate");
+  }
   return c.json(response);
 });
 
