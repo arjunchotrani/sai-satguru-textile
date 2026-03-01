@@ -507,25 +507,25 @@ Please share price, MOQ and availability.`;
       <div className="container mx-auto px-4 lg:px-8">
 
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-[10px] md:text-xs text-white/50 uppercase tracking-wider mb-8 flex-wrap">
+        <div className="flex items-center gap-2 md:gap-3 text-[10px] md:text-xs text-white/50 uppercase tracking-wider mb-8 overflow-x-auto whitespace-nowrap pb-2 no-scrollbar scroll-smooth w-full">
           <Link to="/" className="hover:text-brand-gold shrink-0">Home</Link>
 
           {category && (category.label || category.name) && (
             <>
               <span className="shrink-0 text-white/20">/</span>
-              <Link to={`/category/${category.slug}`} className="hover:text-brand-gold">{category.label || category.name}</Link>
+              <Link to={`/category/${category.slug}`} className="hover:text-brand-gold shrink-0">{category.label || category.name}</Link>
             </>
           )}
 
           {subCategory && (subCategory.label || subCategory.name) && category && (
             <>
               <span className="shrink-0 text-white/20">/</span>
-              <Link to={`/category/${category.slug}/${subCategory.slug}`} className="hover:text-brand-gold">{subCategory.label || subCategory.name}</Link>
+              <Link to={`/category/${category.slug}/${subCategory.slug}`} className="hover:text-brand-gold shrink-0">{subCategory.label || subCategory.name}</Link>
             </>
           )}
 
           <span className="shrink-0 text-white/20">/</span>
-          <span className="text-white font-bold">{product.name}</span>
+          <span className="text-white font-bold shrink-0 pr-4">{product.name}</span>
         </div>
 
         {/* SECTION 1: IMAGE GALLERY (FULL WIDTH / MAX 1200px) */}
