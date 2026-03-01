@@ -204,7 +204,7 @@ export const Navbar: React.FC = () => {
                       setHoveredLink(null);
                       setSelectedCategoryId(null);
                     }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-serif text-white/50 hover:text-white transition-colors duration-300 cursor-pointer"
+                    className="text-3xl md:text-4xl lg:text-5xl font-serif text-white/80 hover:text-white transition-colors duration-300 cursor-pointer"
                   >
                     {item.label}
                   </SmartLink>
@@ -213,7 +213,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-3xl md:text-4xl lg:text-5xl font-serif transition-colors duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'text-white' : 'text-white/50 hover:text-white'
+                    className={`text-3xl md:text-4xl lg:text-5xl font-serif transition-colors duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'text-white' : 'text-white/80 hover:text-white'
                       }`}
                   >
                     {item.label}
