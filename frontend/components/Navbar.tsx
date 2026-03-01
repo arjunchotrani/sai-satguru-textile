@@ -261,7 +261,7 @@ export const Navbar: React.FC = () => {
                       prefetchType="category"
                       prefetchId={cat.id}
                       targetComponent={() => import("../pages/CategoryPage")}
-                      className={`text-2xl md:text-sm uppercase tracking-widest font-bold transition-all duration-300 ${selectedCategoryId === cat.id ? 'text-brand-gold' : 'text-white/40 group-hover/cat:text-white'}`}
+                      className={`text-2xl md:text-sm uppercase tracking-widest font-bold transition-all duration-300 ${selectedCategoryId === cat.id ? 'text-brand-gold' : 'text-white/80 group-hover/cat:text-white'}`}
                     >
                       {cat.name}
                     </SmartLink>
@@ -286,7 +286,7 @@ export const Navbar: React.FC = () => {
                           prefetchType="category"
                           prefetchId={cat.id}
                           targetComponent={() => import("../pages/SubCategoryPage").then(m => ({ default: m.SubCategoryPage }))}
-                          className="block text-lg font-serif text-white/60 hover:text-white transition-colors"
+                          className="block text-lg font-serif text-white/80 hover:text-white transition-colors"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           {sub.name}
