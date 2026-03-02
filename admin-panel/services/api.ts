@@ -38,7 +38,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
+    const isLoginRequest = err.config.url?.includes("/admin/login");
+
+    if (err.response?.status === 401 && !isLoginRequest) {
       console.warn("Session expired or invalid. Redirecting to login...");
       localStorage.removeItem("admin_token");
 

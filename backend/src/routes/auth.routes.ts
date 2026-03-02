@@ -25,7 +25,7 @@ authRoutes.post("/login", async (c) => {
   const { data: admin, error } = await supabase
     .from("admins")
     .select("*")
-    .eq("email", email)
+    .ilike("email", email)
     .single();
   const dbTime = Date.now() - startDb;
 
