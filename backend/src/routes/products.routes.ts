@@ -29,10 +29,11 @@ productsRoutes.get("/", async (c) => {
   const isFeatured = c.req.query("featured") || "";
   const status = c.req.query("status") || "";
 
-  // 1️⃣ Cache Key Generation
-  const cacheKey = `products:list:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}`;
-
   const isAdmin = c.req.path.startsWith("/admin");
+
+  // 1️⃣ Cache Key Generation
+  const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}`;
+
   const cached = await getCache(c.env, cacheKey);
   if (cached && !isAdmin) {
     c.header("Cache-Control", "public, s-maxage=60");
@@ -180,9 +181,10 @@ productsRoutes.get("/", async (c) => {
 ======================= */
 productsRoutes.get("/:id", async (c) => {
   const id = c.req.param("id");
+  const isAdmin = c.req.path.startsWith("/admin");
 
   // 1️⃣ Cache Key Generation
-  const cacheKey = `product:detail:${id}`;
+  const cacheKey = `product:detail:${id}:${isAdmin ? 'admin' : 'public'}`;
 
   const cached = await getCache(c.env, cacheKey);
   if (cached) {
@@ -193,7 +195,7 @@ productsRoutes.get("/:id", async (c) => {
 
   const supabase = c.get("supabase") || getSupabaseAdmin(c.env);
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("products")
     .select(
       `
@@ -220,9 +222,13 @@ productsRoutes.get("/:id", async (c) => {
       `
     )
     .eq("id", id)
-    .eq("is_deleted", false)
-    .eq("is_active", true)
-    .single();
+    .eq("is_deleted", false);
+
+  if (!isAdmin) {
+    query = query.eq("is_active", true);
+  }
+
+  const { data, error } = await query.single();
 
   if (error) {
     return c.json({ success: false, message: error.message }, 500);
