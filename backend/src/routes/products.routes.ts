@@ -29,7 +29,7 @@ productsRoutes.get("/", async (c) => {
   const isFeatured = c.req.query("featured") || "";
   const status = c.req.query("status") || "";
 
-  const isAdmin = c.req.path.startsWith("/admin");
+  const isAdmin = c.req.url.includes("/admin/products");
 
   // 1️⃣ Cache Key Generation
   const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}`;
@@ -181,7 +181,7 @@ productsRoutes.get("/", async (c) => {
 ======================= */
 productsRoutes.get("/:id", async (c) => {
   const id = c.req.param("id");
-  const isAdmin = c.req.path.startsWith("/admin");
+  const isAdmin = c.req.url.includes("/admin/products");
 
   // 1️⃣ Cache Key Generation
   const cacheKey = `product:detail:${id}:${isAdmin ? 'admin' : 'public'}`;

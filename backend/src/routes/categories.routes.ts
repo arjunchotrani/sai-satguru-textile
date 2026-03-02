@@ -16,7 +16,7 @@ import { getCache, setCache, CACHE_TTL } from "../utils/cache";
 categoriesRoutes.get("/", async (c) => {
   // 1️⃣ Try Cache
   const cached = await getCache(c.env, "categories:list");
-  const isAdmin = c.req.path.startsWith("/admin");
+  const isAdmin = c.req.url.includes("/admin/categories");
   if (cached && !isAdmin) {
     c.header("Cache-Control", "public, s-maxage=3600");
     return c.json({ success: true, data: cached });
