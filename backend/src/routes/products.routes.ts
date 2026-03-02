@@ -74,8 +74,11 @@ productsRoutes.get("/", async (c) => {
       `,
       { count: "exact" }
     )
-    .eq("is_deleted", status === "archived")
-    .eq("is_active", status !== "archived");
+    .eq("is_deleted", status === "archived");
+
+  if (!isAdmin) {
+    query = query.eq("is_active", true);
+  }
 
   // 🔹 APPLY FILTERS
   if (search) {

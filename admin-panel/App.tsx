@@ -101,7 +101,7 @@ const MainLayout: React.FC = () => {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed h-full bg-slate-900 text-slate-300 z-[50] transition-all duration-300
+        className={`fixed h-full bg-slate-900 text-slate-300 z-[50] transition-all duration-300 flex flex-col
         ${isSidebarOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0 lg:w-20"}
       `}
       >
@@ -120,7 +120,7 @@ const MainLayout: React.FC = () => {
           </button>
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;
@@ -133,14 +133,14 @@ const MainLayout: React.FC = () => {
                 ${active ? "bg-indigo-600 text-white" : "hover:bg-slate-800"}
               `}
               >
-                <Icon size={20} />
-                {isSidebarOpen && <span className="ml-3">{item.name}</span>}
+                <Icon size={20} className="shrink-0" />
+                {isSidebarOpen && <span className="ml-3 truncate">{item.name}</span>}
               </Link>
             );
           })}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800">
           <button
             onClick={handleLogout}
             className="w-full flex items-center p-3 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-xl"
