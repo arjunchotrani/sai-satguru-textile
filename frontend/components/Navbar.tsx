@@ -240,7 +240,7 @@ export const Navbar: React.FC = () => {
                       setHoveredLink(null);
                       setSelectedCategoryId(null);
                     }}
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer text-left"
+                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer text-left p-0 w-full whitespace-nowrap"
                   >
                     {item.label}
                   </SmartLink>
@@ -249,7 +249,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer text-left ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
+                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer text-left p-0 w-full whitespace-nowrap ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -280,7 +280,7 @@ export const Navbar: React.FC = () => {
               <ChevronRight className="rotate-180" size={14} /> Back to Menu
             </button>
 
-            <div className="mb-4 hidden md:block">
+            <div className="mb-4 hidden md:block md:pl-4">
               <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold block mb-6">Catalog</span>
               <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
