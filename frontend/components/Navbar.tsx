@@ -66,8 +66,33 @@ export const Navbar: React.FC = () => {
     setSelectedCategoryId(null);
   }, [location]);
 
-  // Toggle Menu
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  // Toggle Menu with History Support
+  const toggleMenu = () => {
+    const nextState = !isMenuOpen;
+    setIsMenuOpen(nextState);
+
+    if (nextState) {
+      // When opening, push a dummy state so 'back' closes the menu
+      window.history.pushState({ menuOpen: true }, '');
+    } else {
+      // When closing normally (via X button), if we had pushed a state, go back
+      if (window.history.state?.menuOpen) {
+        window.history.back();
+      }
+    }
+  };
+
+  // Listen for back button to close menu
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -79,14 +104,22 @@ export const Navbar: React.FC = () => {
         <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
 
           <div className="flex items-center gap-4 z-[110]">
-            {/* Back Button (Global) */}
+            {/* Back Button (Context-Aware) */}
             {location.pathname !== '/' && (
               <button
-                onClick={() => navigate(-1)}
-                className="p-1 -ml-2 md:ml-0 text-white/70 hover:text-brand-gold transition-colors"
+                onClick={() => {
+                  // If we have history, go back. Otherwise, go to Home.
+                  if (window.history.state && window.history.state.idx > 0) {
+                    navigate(-1);
+                  } else {
+                    navigate('/');
+                  }
+                }}
+                className="p-1 -ml-2 md:ml-0 text-white/70 hover:text-brand-gold transition-colors flex items-center gap-1 group"
                 aria-label="Go Back"
               >
-                <ChevronLeft size={24} />
+                <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+                <span className="hidden md:block text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Back</span>
               </button>
             )}
 
