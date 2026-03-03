@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { Search, Menu, X, ChevronRight, Globe, Instagram, Facebook, ChevronLeft } from 'lucide-react';
 import { Logo } from './Logo';
 import { useCurrency } from './CurrencyContext';
@@ -20,6 +20,7 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { currentCurrency, setCurrency, currencies } = useCurrency();
   const location = useLocation();
+  const navType = useNavigationType();
 
   const toggleMobileCategory = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
@@ -58,13 +59,15 @@ export const Navbar: React.FC = () => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
   }, [isMenuOpen]);
 
-  // Close Menu on Route Change
+  // Close Menu on Route Change (Only on new navigations, not 'back' actions)
   useEffect(() => {
-    setIsMenuOpen(false);
-    setActivePanel('main');
-    setHoveredLink(null);
-    setSelectedCategoryId(null);
-  }, [location]);
+    if (navType === 'PUSH') {
+      setIsMenuOpen(false);
+      setActivePanel('main');
+      setHoveredLink(null);
+      setSelectedCategoryId(null);
+    }
+  }, [location, navType]);
 
   // Toggle Menu with History Support
   const toggleMenu = () => {
@@ -82,17 +85,17 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  // Listen for back button to close menu
+  // Listen for back button to sync menu state
   useEffect(() => {
     const handlePopState = (e: PopStateEvent) => {
-      if (isMenuOpen) {
-        setIsMenuOpen(false);
-      }
+      // Sync menu state with what was in the history
+      const shouldBeOpen = !!window.history.state?.menuOpen;
+      setIsMenuOpen(shouldBeOpen);
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [isMenuOpen]);
+  }, []);
 
   return (
     <>
