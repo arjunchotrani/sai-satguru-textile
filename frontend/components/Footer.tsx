@@ -72,16 +72,23 @@ export const Footer: React.FC = () => {
             <div className="space-y-6">
               <div>
                 <span className="block text-[10px] text-white uppercase tracking-[0.2em] mb-2 font-bold">Showroom</span>
-                <p className="text-sm font-light text-brand-muted leading-relaxed">{CONTACT_INFO.address}</p>
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_INFO.address)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-light text-brand-muted leading-relaxed hover:text-brand-gold transition-colors block"
+                >
+                  {CONTACT_INFO.address}
+                </a>
               </div>
               <div>
                 <span className="block text-[10px] text-white uppercase tracking-[0.2em] mb-2 font-bold">Contact Us</span>
-                <p className="text-sm font-light text-brand-muted hover:text-white transition-colors cursor-pointer">{CONTACT_INFO.phone}</p>
-                <p className="text-sm font-light text-brand-muted hover:text-white transition-colors cursor-pointer">{CONTACT_INFO.phone2}</p>
+                <a href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`} className="text-sm font-light text-brand-muted hover:text-brand-gold transition-colors block">{CONTACT_INFO.phone}</a>
+                <a href={`tel:${CONTACT_INFO.phone2.replace(/\s+/g, '')}`} className="text-sm font-light text-brand-muted hover:text-brand-gold transition-colors block">{CONTACT_INFO.phone2}</a>
               </div>
               <div>
                 <span className="block text-[10px] text-white uppercase tracking-[0.2em] mb-2 font-bold">E-Mail</span>
-                <p className="text-sm font-light text-brand-muted hover:text-white transition-colors cursor-pointer">{CONTACT_INFO.email}</p>
+                <a href={`mailto:${CONTACT_INFO.email}`} className="text-sm font-light text-brand-muted hover:text-brand-gold transition-colors block">{CONTACT_INFO.email}</a>
               </div>
             </div>
           </div>
