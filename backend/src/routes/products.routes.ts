@@ -270,6 +270,7 @@ productsRoutes.post("/", adminAuth, async (c) => {
     category_id,
     sub_category_id,
     brand_id,
+    brand,
     brand_type,
     price,
     description,
@@ -288,6 +289,17 @@ productsRoutes.post("/", adminAuth, async (c) => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  // Resolve brand_id if missing but brand name provided
+  let resolvedBrandId = brand_id;
+  if (!resolvedBrandId && brand && brand.toLowerCase() !== "generic") {
+    const { data: bData } = await supabase
+      .from("brands")
+      .select("id")
+      .eq("name", brand)
+      .single();
+    if (bData?.id) resolvedBrandId = bData.id;
+  }
+
   const { data, error } = await supabase
     .from("products")
     .insert({
@@ -295,7 +307,8 @@ productsRoutes.post("/", adminAuth, async (c) => {
       slug,
       category_id,
       sub_category_id: sub_category_id || null,
-      brand_id: brand_id || null,
+      brand_id: resolvedBrandId || null,
+      brand: brand || null,
       brand_type: brand_type || "Non-Branded",
       price,
       description: description || null,
@@ -328,6 +341,7 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     category_id,
     sub_category_id,
     brand_id,
+    brand,
     brand_type,
     price,
     description,
@@ -346,6 +360,17 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  // Resolve brand_id if missing but brand name provided
+  let resolvedBrandId = brand_id;
+  if (!resolvedBrandId && brand && brand.toLowerCase() !== "generic") {
+    const { data: bData } = await supabase
+      .from("brands")
+      .select("id")
+      .eq("name", brand)
+      .single();
+    if (bData?.id) resolvedBrandId = bData.id;
+  }
+
   const { error } = await supabase
     .from("products")
     .update({
@@ -353,7 +378,8 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
       slug,
       category_id,
       sub_category_id: sub_category_id || null,
-      brand_id: brand_id || null,
+      brand_id: resolvedBrandId || null,
+      brand: brand || null,
       brand_type: brand_type || "Non-Branded",
       price,
       description: description || null,
