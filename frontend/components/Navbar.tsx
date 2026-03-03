@@ -204,7 +204,7 @@ export const Navbar: React.FC = () => {
                       setHoveredLink(null);
                       setSelectedCategoryId(null);
                     }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-serif text-white/80 hover:text-white transition-colors duration-300 cursor-pointer"
+                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer"
                   >
                     {item.label}
                   </SmartLink>
@@ -213,7 +213,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-3xl md:text-4xl lg:text-5xl font-serif transition-colors duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'text-white' : 'text-white/80 hover:text-white'
+                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'text-brand-gold' : 'text-white/70 hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -245,8 +245,8 @@ export const Navbar: React.FC = () => {
             </button>
 
             <div className="mb-4 hidden md:block">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-bold block mb-8">Catalog</span>
-              <h3 className="font-serif text-3xl text-white mb-2">Categories</h3>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold block mb-6">Catalog</span>
+              <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
 
             <div className="space-y-4 md:space-y-1 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar">
@@ -306,8 +306,8 @@ export const Navbar: React.FC = () => {
               <div className="animate-fade-in w-full">
                 <div className="mb-8 border-b border-white/5 pb-8 flex items-end justify-between">
                   <div>
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-brand-gold font-bold block mb-4">Showing: {categories.find(c => c.id === selectedCategoryId)?.name}</span>
-                    <h3 className="font-serif text-4xl text-white">Refinement</h3>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-brand-gold font-bold block mb-3">Showing: {categories.find(c => c.id === selectedCategoryId)?.name}</span>
+                    <h3 className="font-display text-3xl uppercase tracking-widest text-white">Refinement</h3>
                   </div>
                   <Link
                     to={`/category/${categories.find(c => c.id === selectedCategoryId)?.slug}`}

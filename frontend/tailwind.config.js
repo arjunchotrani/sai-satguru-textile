@@ -15,7 +15,7 @@ export default {
                     dark: '#050505',      /* Rich Black */
                     glass: 'rgba(255, 255, 255, 0.05)',
                     glassBorder: 'rgba(255, 255, 255, 0.1)',
-                    gold: '#FFD700',      /* Gold */
+                    gold: '#D4AF37',      /* Metallic Gold */
                     saffron: '#FF9933',   /* Saffron */
                     red: '#D70040',       /* Deep Red */
                     border: '#1a1a1a',
