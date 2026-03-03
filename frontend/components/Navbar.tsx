@@ -221,7 +221,7 @@ export const Navbar: React.FC = () => {
         <div className="container mx-auto h-full px-6 md:px-12 pt-32 pb-12 flex flex-col md:flex-row">
 
           {/* LEFT PANEL: MAIN NAVIGATION */}
-          <div className={`w-full md:w-1/4 flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
+          <div className={`w-full md:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
             }`}>
             <nav className="flex flex-col items-start gap-4 md:gap-6">
               {[
@@ -240,7 +240,7 @@ export const Navbar: React.FC = () => {
                       setHoveredLink(null);
                       setSelectedCategoryId(null);
                     }}
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer"
+                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer text-left"
                   >
                     {item.label}
                   </SmartLink>
@@ -249,7 +249,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
+                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer text-left ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -271,7 +271,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* MIDDLE PANEL: CATEGORIES (Col 2) */}
-          <div className={`w-full md:w-1/4 h-full md:border-r border-white/5 md:pl-12 flex flex-col justify-start pt-4 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full hidden md:flex'
+          <div className={`w-full md:w-[28%] h-full md:border-r border-white/5 md:pl-12 flex flex-col justify-start pt-4 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full hidden md:flex'
             }`}>
             <button
               onClick={() => setActivePanel('main')}
