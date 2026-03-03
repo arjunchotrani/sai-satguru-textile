@@ -68,7 +68,15 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1 uppercase tracking-widest text-xs">Visit Showroom</h4>
-                    <p className="text-white/50 leading-relaxed text-sm">{CONTACT_INFO.address}</p>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_INFO.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white/50 leading-relaxed text-sm hover:text-brand-gold transition-colors block group"
+                    >
+                      {CONTACT_INFO.address}
+                      <span className="block text-[10px] text-brand-gold mt-1 opacity-0 group-hover:opacity-100 transition-opacity uppercase tracking-widest">Open in Maps →</span>
+                    </a>
                   </div>
                 </div>
 
@@ -78,9 +86,21 @@ export const Contact: React.FC = () => {
                   </div>
                   <div>
                     <h4 className="font-bold mb-1 uppercase tracking-widest text-xs">Phone Support</h4>
-                    <p className="text-white/50 mb-1 text-sm">{CONTACT_INFO.phone}</p>
-                    <p className="text-white/50 mb-1 text-sm">{CONTACT_INFO.phone2}</p>
-                    <p className="text-white/20 text-[10px] uppercase tracking-widest">Mon - Sat, 10am - 8pm</p>
+                    <div className="space-y-2 mt-2">
+                      <a
+                        href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`}
+                        className="flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 px-4 py-2 text-sm hover:bg-white/10 hover:text-white transition-all w-fit rounded-sm"
+                      >
+                        <Phone size={14} className="text-brand-gold" /> {CONTACT_INFO.phone}
+                      </a>
+                      <a
+                        href={`tel:${CONTACT_INFO.phone2.replace(/\s+/g, '')}`}
+                        className="flex items-center gap-2 bg-white/5 border border-white/10 text-white/50 px-4 py-2 text-sm hover:bg-white/10 hover:text-white transition-all w-fit rounded-sm"
+                      >
+                        <Phone size={14} className="text-brand-gold" /> {CONTACT_INFO.phone2}
+                      </a>
+                    </div>
+                    <p className="text-white/20 text-[10px] uppercase tracking-widest mt-3">Mon - Sat, 10am - 8pm</p>
                   </div>
                 </div>
 
