@@ -246,7 +246,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'text-brand-gold' : 'text-white/70 hover:text-white'
+                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.2em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -294,7 +294,7 @@ export const Navbar: React.FC = () => {
                       prefetchType="category"
                       prefetchId={cat.id}
                       targetComponent={() => import("../pages/CategoryPage")}
-                      className={`text-2xl md:text-sm uppercase tracking-widest font-bold transition-all duration-300 ${selectedCategoryId === cat.id ? 'text-brand-gold' : 'text-white/80 group-hover/cat:text-white'}`}
+                      className={`text-2xl md:text-sm uppercase tracking-widest font-bold transition-all duration-300 ${selectedCategoryId === cat.id ? 'md:text-brand-gold text-white' : 'text-white/80 group-hover/cat:text-white'}`}
                     >
                       {cat.name}
                     </SmartLink>
