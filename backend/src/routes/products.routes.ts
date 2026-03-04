@@ -289,6 +289,9 @@ productsRoutes.post("/", adminAuth, async (c) => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  // Append a short random string to ensure uniqueness
+  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+
   // Resolve brand_id if missing but brand name provided
   let resolvedBrandId = brand_id;
   if (!resolvedBrandId && brand && brand.toLowerCase() !== "generic") {
@@ -304,7 +307,7 @@ productsRoutes.post("/", adminAuth, async (c) => {
     .from("products")
     .insert({
       name,
-      slug,
+      slug: uniqueSlug,
       category_id,
       sub_category_id: sub_category_id || null,
       brand_id: resolvedBrandId || null,
@@ -360,6 +363,9 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+  // Append a short random string to ensure uniqueness
+  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+
   // Resolve brand_id if missing but brand name provided
   let resolvedBrandId = brand_id;
   if (!resolvedBrandId && brand && brand.toLowerCase() !== "generic") {
@@ -375,7 +381,7 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     .from("products")
     .update({
       name,
-      slug,
+      slug: uniqueSlug,
       category_id,
       sub_category_id: sub_category_id || null,
       brand_id: resolvedBrandId || null,
