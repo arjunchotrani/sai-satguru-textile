@@ -1,0 +1,22 @@
+[
+  {
+    "id": "edf0dc9f-538c-436d-b278-368792b1d904",
+    "email": "arjunchotrani0@gmail.com",
+    "password_hash": "$2b$10$YmdE.6EKfpm2YFir.RCm3e8Pbgc/4DUsS8.zaflaPTnbOqLhmlR2W",
+    "role": "admin",
+    "reset_token": null,
+    "reset_expires": null,
+    "created_at": "2026-02-03T09:07:35.558004+00:00",
+    "updated_at": "2026-02-03T09:07:35.558004+00:00"
+  },
+  {
+    "id": "4d390911-c96b-4c31-9a30-e7af673c7be4",
+    "email": "Saisatgurutextile@gmail.com",
+    "password_hash": "$2b$10$5eQ.fnlaQQaGf8hKBnJZ/OcaicSJ1.w/B8OwE8z0LltspbgaXOjwq",
+    "role": "admin",
+    "reset_token": null,
+    "reset_expires": null,
+    "created_at": "2026-02-02T11:06:33.553975+00:00",
+    "updated_at": "2026-02-02T11:06:33.553975+00:00"
+  }
+]

@@ -241,10 +241,9 @@ const Products: React.FC = () => {
       brand_type: form.brand_type,
     };
 
-    if (form.brand_type === "Branded") {
-      payload.brand = form.brand;
-    }
-    // Note: If Non-Branded, we omit brand field entirely as per requirements.
+    // For Branded products, use the selected brand.
+    // For Non-Branded products, use form.brand which is set to "Generic" by default in the form state.
+    payload.brand = form.brand;
 
     try {
       if (editing) {
