@@ -221,7 +221,7 @@ export const Navbar: React.FC = () => {
         <div className="container mx-auto h-full px-6 md:px-12 pt-32 pb-[120px] md:pb-12 flex flex-col md:flex-row">
 
           {/* LEFT PANEL: MAIN NAVIGATION */}
-          <div className={`w-full md:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
+          <div className={`w-full md:w-[32%] lg:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
             }`}>
             <nav className="flex flex-col items-start gap-4 md:gap-6">
               {[
@@ -240,7 +240,7 @@ export const Navbar: React.FC = () => {
                       setHoveredLink(null);
                       setSelectedCategoryId(null);
                     }}
-                    className="text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer text-left p-0 w-full whitespace-nowrap"
+                    className="text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-sans uppercase tracking-[0.1em] font-light text-white/70 hover:text-brand-gold transition-all duration-300 cursor-pointer text-left p-0 w-full"
                   >
                     {item.label}
                   </SmartLink>
@@ -249,7 +249,7 @@ export const Navbar: React.FC = () => {
                     key={item.label}
                     onClick={() => setActivePanel('collections')}
                     onMouseEnter={() => setHoveredLink('collections')}
-                    className={`text-2xl md:text-3xl lg:text-4xl font-sans uppercase tracking-[0.1em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer text-left p-0 w-full whitespace-nowrap ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
+                    className={`text-2xl md:text-2xl lg:text-3xl xl:text-4xl font-sans uppercase tracking-[0.1em] font-light transition-all duration-300 flex items-center gap-4 cursor-pointer text-left p-0 w-full ${(hoveredLink === 'collections' || activePanel === 'collections') ? 'md:text-brand-gold text-white' : 'text-white/70 hover:text-white'
                       }`}
                   >
                     {item.label}
@@ -271,7 +271,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* MIDDLE PANEL: CATEGORIES (Col 2) */}
-          <div className={`w-full md:w-[28%] h-full md:border-r border-white/5 md:pl-12 flex flex-col justify-start pt-4 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full hidden md:flex'
+          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-4 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full hidden md:flex'
             }`}>
             <button
               onClick={() => setActivePanel('main')}
@@ -339,7 +339,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* RIGHT PANEL: REFINEMENT (Col 3) - Desktop Only mostly */}
-          <div className={`w-full md:w-1/2 h-full md:pl-16 flex flex-col justify-start pt-4 transition-all duration-500 ${(selectedCategoryId && hoveredLink === 'collections') ? 'opacity-100 translate-x-0 hidden md:flex' : 'opacity-0 translate-x-10 hidden md:flex'
+          <div className={`w-full md:flex-1 h-full md:pl-8 lg:pl-16 flex flex-col justify-start pt-4 transition-all duration-500 ${(selectedCategoryId && hoveredLink === 'collections') ? 'opacity-100 translate-x-0 hidden md:flex' : 'opacity-0 translate-x-10 hidden md:flex'
             }`}>
             {selectedCategoryId && (
               <div className="animate-fade-in w-full">
