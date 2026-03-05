@@ -14,6 +14,7 @@ import { enquiriesRoutes } from "./routes/enquiries.routes";
 import { dashboardRoutes } from "./routes/dashboard.routes";
 import { analyticsRoutes } from "./routes/analytics.routes";
 import { brandsRoutes } from "./routes/brands.routes";
+import { sitemapRoutes } from "./routes/sitemap.routes";
 
 const app = new Hono<{
   Bindings: Env;
@@ -82,6 +83,11 @@ app.get("/", (c) =>
 );
 
 
+
+/* =====================================================
+   🗺️ SITEMAP ROUTES (PUBLIC, NO AUTH)
+===================================================== */
+app.route("/", sitemapRoutes);
 
 /* =====================================================
    🌐 PUBLIC READ-ONLY ROUTES (WEBSITE)
