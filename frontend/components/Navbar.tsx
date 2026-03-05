@@ -285,7 +285,7 @@ export const Navbar: React.FC = () => {
               <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
 
-            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar h-auto max-h-[70vh]">
+            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar">
               {categories.map((cat, idx) => (
                 <div key={cat.id}
                   onMouseEnter={() => setSelectedCategoryId(cat.id)}
@@ -305,7 +305,7 @@ export const Navbar: React.FC = () => {
                     {groupedSubCategories[cat.id]?.length > 0 && (
                       <button
                         onClick={(e) => toggleMobileCategory(e, cat.id)}
-                        className="md:hidden p-4 -mr-4 text-white/50 hover:text-white"
+                        className="md:hidden p-2 text-white/50 hover:text-white"
                         aria-label={`Toggle ${cat.name} subcategories`}
                       >
                         <ChevronRight size={24} className={`transition-transform duration-300 ${expandedMobileCategory === cat.id ? 'rotate-90' : ''}`} />
