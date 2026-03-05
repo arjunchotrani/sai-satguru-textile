@@ -285,7 +285,7 @@ export const Navbar: React.FC = () => {
               <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
 
-            <div className="space-y-4 md:space-y-1 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar">
+            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar pb-32 md:pb-12">
               {categories.map((cat, idx) => (
                 <div key={cat.id}
                   onMouseEnter={() => setSelectedCategoryId(cat.id)}
