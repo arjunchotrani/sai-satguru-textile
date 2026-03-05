@@ -285,7 +285,7 @@ export const Navbar: React.FC = () => {
               <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
 
-            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar pb-48 md:pb-12 h-auto max-h-[70vh]">
+            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar h-auto max-h-[70vh]">
               {categories.map((cat, idx) => (
                 <div key={cat.id}
                   onMouseEnter={() => setSelectedCategoryId(cat.id)}
@@ -305,9 +305,10 @@ export const Navbar: React.FC = () => {
                     {groupedSubCategories[cat.id]?.length > 0 && (
                       <button
                         onClick={(e) => toggleMobileCategory(e, cat.id)}
-                        className="md:hidden p-2 text-white/50 hover:text-white"
+                        className="md:hidden p-4 -mr-4 text-white/50 hover:text-white"
+                        aria-label={`Toggle ${cat.name} subcategories`}
                       >
-                        <ChevronRight size={20} className={`transition-transform duration-300 ${expandedMobileCategory === cat.id ? 'rotate-90' : ''}`} />
+                        <ChevronRight size={24} className={`transition-transform duration-300 ${expandedMobileCategory === cat.id ? 'rotate-90' : ''}`} />
                       </button>
                     )}
                   </div>
@@ -322,7 +323,7 @@ export const Navbar: React.FC = () => {
                           prefetchType="category"
                           prefetchId={cat.id}
                           targetComponent={() => import("../pages/SubCategoryPage").then(m => ({ default: m.SubCategoryPage }))}
-                          className="block text-lg font-serif text-white/80 hover:text-white transition-colors"
+                          className="block text-lg font-serif text-white/80 hover:text-white transition-colors py-1"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           {sub.name}
@@ -332,6 +333,8 @@ export const Navbar: React.FC = () => {
                   </div>
                 </div>
               ))}
+              {/* Spacer at the end of scroll list instead of padding-bottom, fixes iOS Safari scroll padding bug */}
+              <div className="h-40 md:h-12 w-full flex-shrink-0"></div>
             </div>
           </div>
 
