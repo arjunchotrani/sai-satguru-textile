@@ -223,7 +223,7 @@ export const Navbar: React.FC = () => {
           {/* LEFT PANEL: MAIN NAVIGATION */}
           <div className={`w-full md:w-[32%] lg:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
             }`}>
-            <nav className="flex flex-col items-start gap-4 md:gap-6">
+            <nav className="flex flex-col items-start gap-4 md:gap-6 mb-8">
               {[
                 { label: 'Home', path: '/', component: () => import("../pages/Home") },
                 { label: 'Our Collections', id: 'collections', hasArrow: true },
