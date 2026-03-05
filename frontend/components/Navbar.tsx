@@ -218,7 +218,7 @@ export const Navbar: React.FC = () => {
         {/* Background Elements */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-white/5 via-transparent to-transparent opacity-50"></div>
 
-        <div className="container mx-auto h-full px-6 md:px-12 pt-32 pb-12 flex flex-col md:flex-row">
+        <div className="container mx-auto h-full px-6 md:px-12 pt-32 pb-[120px] md:pb-12 flex flex-col md:flex-row">
 
           {/* LEFT PANEL: MAIN NAVIGATION */}
           <div className={`w-full md:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100 hidden md:flex' : 'translate-x-0 opacity-100 flex'
@@ -285,7 +285,7 @@ export const Navbar: React.FC = () => {
               <h3 className="font-display text-2xl tracking-[0.1em] uppercase text-white mb-2 border-b border-brand-gold/30 pb-2 w-fit">Categories</h3>
             </div>
 
-            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+            <div className="space-y-4 md:space-y-1 overflow-y-auto flex-1 min-h-0 pr-2 custom-scrollbar">
               {categories.map((cat, idx) => (
                 <div key={cat.id}
                   onMouseEnter={() => setSelectedCategoryId(cat.id)}
@@ -305,7 +305,7 @@ export const Navbar: React.FC = () => {
                     {groupedSubCategories[cat.id]?.length > 0 && (
                       <button
                         onClick={(e) => toggleMobileCategory(e, cat.id)}
-                        className="md:hidden p-2 text-white/50 hover:text-white"
+                        className="md:hidden px-4 py-2 -mr-2 text-white/50 hover:text-white"
                         aria-label={`Toggle ${cat.name} subcategories`}
                       >
                         <ChevronRight size={24} className={`transition-transform duration-300 ${expandedMobileCategory === cat.id ? 'rotate-90' : ''}`} />
@@ -314,7 +314,7 @@ export const Navbar: React.FC = () => {
                   </div>
 
                   {/* Mobile Sub-Categories (Accordion Style) */}
-                  <div className={`md:hidden w-full overflow-hidden transition-all duration-300 ${expandedMobileCategory === cat.id ? 'max-h-[500px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
+                  <div className={`md:hidden w-full overflow-hidden transition-all duration-300 ${expandedMobileCategory === cat.id ? 'max-h-[1500px] opacity-100 mt-2' : 'max-h-0 opacity-0'}`}>
                     <div className="border-l border-white/10 pl-4 space-y-2 pb-2">
                       {groupedSubCategories[cat.id]?.map(sub => (
                         <SmartLink
