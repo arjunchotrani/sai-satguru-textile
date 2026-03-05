@@ -38,6 +38,10 @@ export const Navbar: React.FC = () => {
   const groupedSubCategories = React.useMemo(() => {
     const groups: Record<string, SubCategory[]> = {};
     (subCategoryData || []).forEach((sub: any) => {
+      // Check if subcategory is active before adding it
+      if (sub.is_active === false || sub.is_active === 0 || sub.status === 'inactive') {
+        return; // Skip inactive subcategories
+      }
       const catId = sub.category_id || sub.categoryId;
       if (catId) {
         if (!groups[catId]) groups[catId] = [];
