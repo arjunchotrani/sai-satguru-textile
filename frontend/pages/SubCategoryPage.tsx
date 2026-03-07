@@ -142,13 +142,18 @@ export const SubCategoryPage: React.FC = () => {
         </div>
 
         {/* Filter Panel (Mobile Drawer + Desktop Expand) */}
-        <div className={`
-            fixed inset-0 z-[200] md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
+        <div
+          className={`
+            fixed inset-0 z-[200] flex flex-col justify-end md:block md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
             ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-md:invisible md:max-h-0 md:mb-0'}
-        `}>
+          `}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsFilterOpen(false);
+          }}
+        >
           <div className={`
-                fixed bottom-0 left-0 right-0 bg-[#111] border-t border-white/10 p-6 rounded-t-2xl shadow-2xl
-                md:static md:bg-white/5 md:border md:rounded-sm md:p-8 md:mb-12 md:shadow-none
+                w-full bg-[#111] border-t border-white/10 p-6 pb-12 rounded-t-2xl shadow-2xl mt-auto
+                md:mt-0 md:static md:bg-white/5 md:border md:rounded-sm md:p-8 md:mb-12 md:shadow-none
                 transition-transform duration-300 ease-out
                 ${isFilterOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
             `}>
