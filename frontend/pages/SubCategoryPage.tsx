@@ -15,7 +15,7 @@ export const SubCategoryPage: React.FC = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [sortBy, setSortBy] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 12;
+  const PAGE_SIZE = 10;
 
   // 1. Fetch Categories to find the current one
   const { data: categories } = useCategories();

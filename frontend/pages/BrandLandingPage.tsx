@@ -27,7 +27,7 @@ export const BrandLandingPage: React.FC = () => {
 
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         const loadData = async () => {
