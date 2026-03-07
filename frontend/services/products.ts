@@ -88,6 +88,7 @@ export async function fetchProducts(filters: {
   search?: string;
   limit?: number;
   includeImages?: boolean;
+  sort?: string;
 } = {}) {
   const params = new URLSearchParams();
 
@@ -109,6 +110,10 @@ export async function fetchProducts(filters: {
 
   if (filters.limit) {
     params.append("limit", String(filters.limit));
+  }
+
+  if (filters.sort) {
+    params.append("sort", filters.sort);
   }
 
   const res = await fetch(
@@ -145,6 +150,7 @@ export async function fetchProductsPaginated(filters: {
   search?: string;
   limit?: number;
   page?: number;
+  sort?: string;
 } = {}) {
   const params = new URLSearchParams();
 
@@ -155,6 +161,7 @@ export async function fetchProductsPaginated(filters: {
 
   params.append("limit", String(filters.limit || 50));
   params.append("page", String(filters.page || 1));
+  if (filters.sort) params.append("sort", filters.sort);
 
   const res = await fetch(`${API_BASE}/products?${params.toString()}`);
 

@@ -28,11 +28,12 @@ productsRoutes.get("/", async (c) => {
   const brandType = c.req.query("brand_type") || "";
   const isFeatured = c.req.query("featured") || "";
   const status = c.req.query("status") || "";
+  const sort = c.req.query("sort") || "latest"; // latest, price_asc, price_desc
 
   const isAdmin = c.req.url.includes("/admin/products");
 
   // 1️⃣ Cache Key Generation
-  const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}`;
+  const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}:${sort}`;
 
   const cached = await getCache(c.env, cacheKey);
   if (cached && !isAdmin) {
@@ -123,6 +124,10 @@ productsRoutes.get("/", async (c) => {
 
   if (isFeatured === "true") {
     query = query.order("created_at", { ascending: false });
+  } else if (sort === "price_asc") {
+    query = query.order("price", { ascending: true });
+  } else if (sort === "price_desc") {
+    query = query.order("price", { ascending: false });
   } else {
     query = query.order("created_at", { ascending: false });
   }

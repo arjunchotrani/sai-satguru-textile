@@ -11,6 +11,7 @@ const CategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [sortBy, setSortBy] = useState("latest");
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 12;
 
@@ -33,8 +34,8 @@ const CategoryPage: React.FC = () => {
 
   // 2. Fetch Products (React Query handles caching & background updates)
   const filter = matchedCategory
-    ? { category_id: matchedCategory.id, limit: PAGE_SIZE, page: currentPage }
-    : { limit: PAGE_SIZE, page: currentPage };
+    ? { category_id: matchedCategory.id, limit: PAGE_SIZE, page: currentPage, sort: sortBy }
+    : { limit: PAGE_SIZE, page: currentPage, sort: sortBy };
 
   const {
     data: productsData,
@@ -48,7 +49,7 @@ const CategoryPage: React.FC = () => {
   // 🔹 Reset page on category or filter change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [slug, selectedBrands]);
+  }, [slug, selectedBrands, sortBy]);
 
   // 🔹 Scroll to top on page change
   React.useEffect(() => {
@@ -116,18 +117,34 @@ const CategoryPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Filter Button */}
-          <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 relative z-40 ${isFilterOpen
-              ? 'bg-brand-gold text-black border-brand-gold'
-              : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
-              }`}
-          >
-            <Filter size={16} />
-            <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
-            <ChevronDown size={14} className={`transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} />
-          </button>
+          <div className="flex items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
+            {/* Sort Dropdown */}
+            <div className="relative flex-1 md:flex-none">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full appearance-none bg-white/5 text-white border border-white/10 px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold focus:outline-none focus:border-brand-gold/50 transition-all cursor-pointer pr-10"
+              >
+                <option value="latest" className="bg-[#111]">Latest</option>
+                <option value="price_asc" className="bg-[#111]">Price: Low to High</option>
+                <option value="price_desc" className="bg-[#111]">Price: High to Low</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/50" />
+            </div>
+
+            {/* Filter Button */}
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 relative z-40 ${isFilterOpen
+                ? 'bg-brand-gold text-black border-brand-gold'
+                : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
+                }`}
+            >
+              <Filter size={16} />
+              <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
+              <ChevronDown size={14} className={`transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
         </div>
 
         {/* Filter Panel (Mobile Drawer + Desktop Expand) */}

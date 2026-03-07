@@ -22,6 +22,7 @@ export const BrandLandingPage: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [sortBy, setSortBy] = useState("latest");
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     // Pagination states
@@ -108,6 +109,7 @@ export const BrandLandingPage: React.FC = () => {
     const clearAllFilters = () => {
         setSelectedCategory('');
         setSearchQuery('');
+        setSortBy('latest');
         setCurrentPage(1);
     };
 
@@ -178,23 +180,43 @@ export const BrandLandingPage: React.FC = () => {
                         </p>
                     </div>
 
-                    {/* Filter Button */}
-                    <button
-                        onClick={() => setIsDrawerOpen(true)}
-                        className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 relative z-40 ${isDrawerOpen
-                            ? 'bg-brand-gold text-black border-brand-gold'
-                            : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
-                            }`}
-                    >
-                        <Filter size={16} />
-                        <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
-                        {activeFiltersCount > 0 && (
-                            <span className="ml-1 w-5 h-5 bg-brand-gold text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
-                                {activeFiltersCount}
-                            </span>
-                        )}
-                        <ChevronDown size={14} className={`transition-transform duration-300 ${isDrawerOpen ? 'rotate-180' : ''}`} />
-                    </button>
+                    {/* Sorting & Filter Actions */}
+                    <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
+                        {/* Sort Dropdown */}
+                        <div className="relative w-full md:w-auto flex-1 md:flex-none">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => {
+                                    setSortBy(e.target.value);
+                                    setCurrentPage(1);
+                                }}
+                                className="w-full appearance-none bg-white/5 text-white border border-white/10 px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold focus:outline-none focus:border-brand-gold/50 transition-all cursor-pointer pr-10"
+                            >
+                                <option value="latest" className="bg-[#111]">Latest</option>
+                                <option value="price_asc" className="bg-[#111]">Price: Low to High</option>
+                                <option value="price_desc" className="bg-[#111]">Price: High to Low</option>
+                            </select>
+                            <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/50" />
+                        </div>
+
+                        {/* Filter Button */}
+                        <button
+                            onClick={() => setIsDrawerOpen(true)}
+                            className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 relative z-40 ${isDrawerOpen
+                                ? 'bg-brand-gold text-black border-brand-gold'
+                                : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
+                                }`}
+                        >
+                            <Filter size={16} />
+                            <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
+                            {activeFiltersCount > 0 && (
+                                <span className="ml-1 w-5 h-5 bg-brand-gold text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
+                                    {activeFiltersCount}
+                                </span>
+                            )}
+                            <ChevronDown size={14} className={`transition-transform duration-300 ${isDrawerOpen ? 'rotate-180' : ''}`} />
+                        </button>
+                    </div>
                 </div>
 
                 {/* 🔹 Sidebar Filter Drawer Overlay (Portaled to Body) */}

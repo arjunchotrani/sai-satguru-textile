@@ -47,6 +47,7 @@ export const useProducts = (filters: {
     search?: string;
     limit?: number;
     includeImages?: boolean;
+    sort?: string;
 }) => {
     return useQuery<Product[]>({
         queryKey: ['products', filters],
@@ -62,6 +63,7 @@ export const useProductsInfinite = (filters: {
     brand_id?: string;
     search?: string;
     limit?: number;
+    sort?: string;
 }) => {
     return useInfiniteQuery({
         queryKey: ['productsInfinite', filters],
@@ -84,6 +86,7 @@ export const usePaginatedProducts = (filters: {
     search?: string;
     limit?: number;
     page?: number;
+    sort?: string;
 }) => {
     return useQuery<{ products: Product[], total: number, page: number, limit: number }>({
         queryKey: ['productsPaginated', filters],
