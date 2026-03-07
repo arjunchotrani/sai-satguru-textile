@@ -77,6 +77,22 @@ export const useProductsInfinite = (filters: {
     });
 };
 
+export const usePaginatedProducts = (filters: {
+    category_id?: string;
+    sub_category_id?: string;
+    brand_id?: string;
+    search?: string;
+    limit?: number;
+    page?: number;
+}) => {
+    return useQuery<{ products: Product[], total: number, page: number, limit: number }>({
+        queryKey: ['productsPaginated', filters],
+        queryFn: () => fetchProductsPaginated(filters),
+        staleTime: 1000 * 60 * 5,
+        placeholderData: keepPreviousData,
+    });
+};
+
 export const useNewArrivals = (page: number = 1, limit: number = 12) => {
     return useQuery<{ products: Product[], total: number }>({
         queryKey: ['newArrivals', page],
