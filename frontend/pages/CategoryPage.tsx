@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { SEO } from "../components/SEO";
 import { ProductCard } from "../components/ProductCard";
-import { Filter, X, ChevronDown, ChevronRight } from "lucide-react";
-import { useProductsInfinite, useCategories, useBrands } from "../hooks/useProducts";
+import { ChevronLeft, ChevronRight, Filter, X, ChevronDown } from "lucide-react";
+import { usePaginatedProducts, useCategories, useBrands } from "../hooks/useProducts";
 
 import type { Category, Brand, Product } from "../types";
 
@@ -11,6 +11,8 @@ const CategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const [selectedBrands, setSelectedBrands] = useState<Set<string>>(new Set());
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 12;
 
   // 1. Fetch Categories to find the current one
   const { data: categories } = useCategories();
@@ -31,19 +33,27 @@ const CategoryPage: React.FC = () => {
 
   // 2. Fetch Products (React Query handles caching & background updates)
   const filter = matchedCategory
-    ? { category_id: matchedCategory.id, limit: 20 }
-    : { limit: 20 };
+    ? { category_id: matchedCategory.id, limit: PAGE_SIZE, page: currentPage }
+    : { limit: PAGE_SIZE, page: currentPage };
 
   const {
     data: productsData,
     isLoading: productsLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage
-  } = useProductsInfinite(filter);
+  } = usePaginatedProducts(filter);
 
-  // Flatten the pages from infinite query
-  const products: Product[] = productsData?.pages.flatMap(page => page.products) || [];
+  const products = productsData?.products || [];
+  const totalProducts = productsData?.total || 0;
+  const totalPages = Math.ceil(totalProducts / PAGE_SIZE);
+
+  // 🔹 Reset page on category or filter change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [slug, selectedBrands]);
+
+  // 🔹 Scroll to top on page change
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
   // 3. Fetch Brands
   const { data: allBrands = [] } = useBrands();
@@ -102,7 +112,7 @@ const CategoryPage: React.FC = () => {
               {title}
             </h1>
             <p className="text-white/60 text-xs md:text-base font-light tracking-wide leading-relaxed">
-              {filteredProducts.length} Premium {filteredProducts.length === 1 ? 'Product' : 'Products'} Available
+              {totalProducts} Premium {totalProducts === 1 ? 'Product' : 'Products'} Available
             </p>
           </div>
 
@@ -180,7 +190,7 @@ const CategoryPage: React.FC = () => {
                 onClick={() => setIsFilterOpen(false)}
                 className="flex-1 py-3 bg-brand-gold text-black rounded-full text-xs uppercase tracking-widest font-bold shadow-lg"
               >
-                Apply ({filteredProducts.length})
+                Apply ({totalProducts})
               </button>
             </div>
           </div>
@@ -214,18 +224,38 @@ const CategoryPage: React.FC = () => {
             </div>
           )}
 
-          {/* Load More Button */}
-          {hasNextPage && (
-            <div className="flex justify-center mt-12 mb-8">
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="mt-20 flex items-center justify-center gap-6">
               <button
-                onClick={() => fetchNextPage()}
-                disabled={isFetchingNextPage}
-                className={`py-3 px-8 border border-brand-gold text-brand-gold rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${isFetchingNextPage
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:bg-brand-gold hover:text-black shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)]'
-                  }`}
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-white/50 hover:text-brand-gold disabled:opacity-20 disabled:pointer-events-none transition-colors"
               >
-                {isFetchingNextPage ? 'Loading...' : 'Load More Products'}
+                <ChevronLeft size={16} /> Previous
+              </button>
+
+              <div className="flex gap-4">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${currentPage === i + 1
+                        ? "border-brand-gold text-brand-gold bg-brand-gold/10"
+                        : "border-white/10 text-white/30 hover:border-white/30"
+                      }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-white/50 hover:text-brand-gold disabled:opacity-20 disabled:pointer-events-none transition-colors"
+              >
+                Next <ChevronRight size={16} />
               </button>
             </div>
           )}
