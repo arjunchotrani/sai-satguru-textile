@@ -133,8 +133,8 @@ const CategoryPage: React.FC = () => {
         {/* Filter Panel (Mobile Drawer + Desktop Expand) */}
         <div
           className={`
-            fixed inset-0 z-[200] flex flex-col justify-end md:block md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
-            ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-md:invisible md:max-h-0 md:mb-0'}
+            fixed inset-0 z-[200] flex flex-col justify-end md:block md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-all duration-300
+            ${isFilterOpen ? 'opacity-100 pointer-events-auto visible' : 'opacity-0 pointer-events-none invisible md:visible md:max-h-0 md:mb-0'}
           `}
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsFilterOpen(false);
@@ -143,8 +143,8 @@ const CategoryPage: React.FC = () => {
           <div className={`
                 w-full bg-[#111] border-t border-white/10 p-6 pb-12 rounded-t-2xl shadow-2xl mt-auto
                 md:mt-0 md:static md:bg-white/5 md:border md:rounded-sm md:p-8 md:mb-12 md:shadow-none
-                transition-transform duration-300 ease-out
-                ${isFilterOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
+                transition-all duration-300 ease-in-out
+                ${isFilterOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 md:translate-y-0 md:opacity-100'}
             `}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-serif text-xl text-white">Filter by Brand</h3>
