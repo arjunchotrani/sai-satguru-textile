@@ -149,8 +149,13 @@ const Products: React.FC = () => {
 
   /* ================= SUB FILTER (FOR FORM) ================= */
   const formSubCategories = useMemo(
-    () => subCategories.filter((s) => s.category_id === form.category_id),
-    [form.category_id, subCategories]
+    () => subCategories.filter((s) => s.category_id === form.category_id && (s.is_active !== false || s.id === form.sub_category_id)),
+    [form.category_id, subCategories, form.sub_category_id]
+  );
+
+  const formCategories = useMemo(
+    () => categories.filter((c) => c.is_active !== false || c.id === form.category_id),
+    [categories, form.category_id]
   );
 
   /* ================= VISIBILITY ================= */
@@ -702,7 +707,7 @@ const Products: React.FC = () => {
                     }
                   >
                     <option value="">Select Category</option>
-                    {categories.map((c) => (
+                    {formCategories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
                       </option>
