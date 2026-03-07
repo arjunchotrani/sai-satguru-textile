@@ -30,7 +30,7 @@ export const SubCategoryPage: React.FC = () => {
 
   // 3. Fetch Products (React Query)
   const filter = category && subCategory
-    ? { category_id: category.id, sub_category_id: subCategory.id, includeImages: true }
+    ? { category_id: category.id, sub_category_id: subCategory.id, limit: 100, includeImages: true }
     : undefined;
 
   const { data: products = [], isLoading: productsLoading } = useProducts(filter || {});

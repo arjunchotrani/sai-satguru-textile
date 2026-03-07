@@ -31,8 +31,8 @@ const CategoryPage: React.FC = () => {
 
   // 2. Fetch Products (React Query handles caching & background updates)
   const filter = matchedCategory
-    ? { category_id: matchedCategory.id, includeImages: true }
-    : { limit: 50, includeImages: true };
+    ? { category_id: matchedCategory.id, limit: 100, includeImages: true }
+    : { limit: 100, includeImages: true };
 
   const { data: products = [], isLoading: productsLoading } = useProducts(filter);
 
