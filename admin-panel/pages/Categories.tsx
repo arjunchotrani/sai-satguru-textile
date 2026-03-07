@@ -113,6 +113,7 @@ const Categories: React.FC = () => {
     try {
       const payload = {
         name: currentCategory.name,
+        display_order: currentCategory.display_order,
         // Send created_at if edited/set
         created_at: currentCategory.created_at,
       };
@@ -232,6 +233,7 @@ const Categories: React.FC = () => {
             <thead className="bg-slate-50 text-xs uppercase text-slate-500 font-semibold tracking-wider">
               <tr>
                 <th className="px-6 py-4 text-left">Name</th>
+                <th className="px-6 py-4 text-center">Order</th>
                 <th className="px-6 py-4 text-left">Created At</th>
                 <th className="px-6 py-4 text-center">Sub-Categories</th>
                 <th className="px-6 py-4 text-center">Products</th>
@@ -259,6 +261,11 @@ const Categories: React.FC = () => {
                     <td className="px-6 py-4">
                       <p className="font-bold text-slate-800">{cat.name}</p>
                       <p className="text-xs text-slate-400">/{cat.slug}</p>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-mono text-xs font-bold">
+                        {cat.display_order || 0}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -367,93 +374,118 @@ const Categories: React.FC = () => {
       </div>
 
       {/* Footer / Pagination */}
-      {!isLoading && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      )}
+      {
+        !isLoading && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )
+      }
 
       {/* MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-4 md:p-0">
-          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <h2 className="font-bold text-xl text-slate-800">
-                {currentCategory.id ? "Edit" : "New"} Category
-              </h2>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
-              >
-                <X size={20} className="text-slate-500" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Category Name
-                </label>
-                <input
-                  value={currentCategory.name || ""}
-                  onChange={(e) =>
-                    setCurrentCategory({
-                      ...currentCategory,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. Sarees"
-                  className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
-                />
+      {
+        isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-4 md:p-0">
+            <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="font-bold text-xl text-slate-800">
+                  {currentCategory.id ? "Edit" : "New"} Category
+                </h2>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+                >
+                  <X size={20} className="text-slate-500" />
+                </button>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Creation Date (Admin Only)
-                </label>
-                <div className="relative">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Category Name
+                  </label>
                   <input
-                    type="datetime-local"
-                    value={
-                      currentCategory.created_at
-                        ? new Date(currentCategory.created_at).toISOString().slice(0, 16)
-                        : ""
-                    }
+                    value={currentCategory.name || ""}
                     onChange={(e) =>
                       setCurrentCategory({
                         ...currentCategory,
-                        created_at: new Date(e.target.value).toISOString(),
+                        name: e.target.value,
                       })
                     }
-                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm md:text-base"
+                    placeholder="e.g. Sarees"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
                   />
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Only visible in admin panel (for sorting/memory).
-                </p>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Display Order (Index)
+                  </label>
+                  <input
+                    type="number"
+                    value={currentCategory.display_order ?? ""}
+                    onChange={(e) =>
+                      setCurrentCategory({
+                        ...currentCategory,
+                        display_order: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    placeholder="e.g. 1"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
+                  />
+                  <p className="text-xs text-slate-400 mt-1">
+                    Lower numbers appear first in the menu.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Creation Date (Admin Only)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      value={
+                        currentCategory.created_at
+                          ? new Date(currentCategory.created_at).toISOString().slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setCurrentCategory({
+                          ...currentCategory,
+                          created_at: new Date(e.target.value).toISOString(),
+                        })
+                      }
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm md:text-base"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Only visible in admin panel (for sorting/memory).
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex gap-3">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-3 font-semibold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-bold transition-colors shadow-lg shadow-indigo-200"
+                >
+                  Save Category
+                </button>
               </div>
             </div>
-
-            <div className="mt-8 flex gap-3">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-3 font-semibold hover:bg-slate-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-bold transition-colors shadow-lg shadow-indigo-200"
-              >
-                Save Category
-              </button>
-            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

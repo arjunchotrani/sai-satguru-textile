@@ -110,6 +110,7 @@ const SubCategories: React.FC = () => {
       const payload = {
         name: currentSub.name,
         category_id: currentSub.category_id,
+        display_order: currentSub.display_order,
         created_at: currentSub.created_at, // Send override date
       };
 
@@ -248,6 +249,7 @@ const SubCategories: React.FC = () => {
             <thead className="bg-slate-50 text-xs uppercase text-slate-500 font-semibold tracking-wider">
               <tr>
                 <th className="px-6 py-4 text-left">Name</th>
+                <th className="px-6 py-4 text-center">Order</th>
                 <th className="px-6 py-4 text-left">Created At</th>
                 <th className="px-6 py-4 text-center">Parent Category</th>
                 <th className="px-6 py-4 text-center">Products</th>
@@ -273,6 +275,11 @@ const SubCategories: React.FC = () => {
                 paginatedSubs.map((sub) => (
                   <tr key={sub.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-bold text-slate-800">{sub.name}</td>
+                    <td className="px-6 py-4 text-center">
+                      <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-mono text-xs font-bold">
+                        {sub.display_order || 0}
+                      </span>
+                    </td>
 
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -392,113 +399,138 @@ const SubCategories: React.FC = () => {
       </div>
 
       {/* Pagination Controls */}
-      {!isLoading && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      )}
+      {
+        !isLoading && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )
+      }
 
       {/* MODAL */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-4 md:p-0">
-          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
-            <div className="flex justify-between items-center mb-6 border-b pb-4">
-              <h2 className="font-bold text-xl text-slate-800">
-                {currentSub.id ? "Edit" : "Add"} Sub-Category
-              </h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                <X size={20} className="text-slate-500" />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Parent Category
-                </label>
-                <select
-                  value={currentSub.category_id || ""}
-                  onChange={(e) =>
-                    setCurrentSub({
-                      ...currentSub,
-                      category_id: e.target.value,
-                    })
-                  }
-                  className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
-                >
-                  <option value="">Select Category</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
+      {
+        isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-4 md:p-0">
+            <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="font-bold text-xl text-slate-800">
+                  {currentSub.id ? "Edit" : "Add"} Sub-Category
+                </h2>
+                <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                  <X size={20} className="text-slate-500" />
+                </button>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Name
-                </label>
-                <input
-                  value={currentSub.name || ""}
-                  onChange={(e) =>
-                    setCurrentSub({
-                      ...currentSub,
-                      name: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. Men, Women"
-                  className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Creation Date (Admin Only)
-                </label>
-                <div className="relative">
-                  <input
-                    type="datetime-local"
-                    value={
-                      currentSub.created_at
-                        ? new Date(currentSub.created_at).toISOString().slice(0, 16)
-                        : ""
-                    }
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Parent Category
+                  </label>
+                  <select
+                    value={currentSub.category_id || ""}
                     onChange={(e) =>
                       setCurrentSub({
                         ...currentSub,
-                        created_at: new Date(e.target.value).toISOString(),
+                        category_id: e.target.value,
                       })
                     }
-                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm md:text-base"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Name
+                  </label>
+                  <input
+                    value={currentSub.name || ""}
+                    onChange={(e) =>
+                      setCurrentSub({
+                        ...currentSub,
+                        name: e.target.value,
+                      })
+                    }
+                    placeholder="e.g. Men, Women"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
                   />
                 </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Only visible in admin panel (for sorting/memory).
-                </p>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Display Order (Index)
+                  </label>
+                  <input
+                    type="number"
+                    value={currentSub.display_order ?? ""}
+                    onChange={(e) =>
+                      setCurrentSub({
+                        ...currentSub,
+                        display_order: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    placeholder="e.g. 1"
+                    className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none"
+                  />
+                  <p className="text-xs text-slate-400 mt-1">
+                    Lower numbers appear first in filters/menus.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Creation Date (Admin Only)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="datetime-local"
+                      value={
+                        currentSub.created_at
+                          ? new Date(currentSub.created_at).toISOString().slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setCurrentSub({
+                          ...currentSub,
+                          created_at: new Date(e.target.value).toISOString(),
+                        })
+                      }
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm md:text-base"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Only visible in admin panel (for sorting/memory).
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-8 flex gap-3">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-3 font-semibold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-bold transition-colors shadow-lg shadow-indigo-200"
+                >
+                  Save
+                </button>
               </div>
             </div>
-
-            <div className="mt-8 flex gap-3">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 border border-slate-200 text-slate-600 rounded-xl py-3 font-semibold hover:bg-slate-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-3 font-bold transition-colors shadow-lg shadow-indigo-200"
-              >
-                Save
-              </button>
-            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 

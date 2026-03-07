@@ -7,6 +7,7 @@ export interface Category {
   // backend fields
   is_active: boolean;
   created_at: string;
+  display_order: number;
 
   // derived counts (from backend query)
   subcategory_count: number;
@@ -27,6 +28,7 @@ export interface SubCategory {
 
   /* OPTIONAL (safe for future) */
   created_at?: string;
+  display_order?: number;
 }
 
 export interface Product {

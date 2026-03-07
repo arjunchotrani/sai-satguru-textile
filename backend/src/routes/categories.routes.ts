@@ -35,10 +35,12 @@ categoriesRoutes.get("/", async (c) => {
       slug,
       is_active,
       created_at,
+      display_order,
       sub_categories:sub_categories(count),
       products:products(count)
     `)
     .eq("is_deleted", false)
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -51,6 +53,7 @@ categoriesRoutes.get("/", async (c) => {
     slug: cat.slug,
     is_active: cat.is_active,
     created_at: cat.created_at,
+    display_order: cat.display_order || 0,
     subcategory_count: cat.sub_categories?.[0]?.count ?? 0,
     product_count: cat.products?.[0]?.count ?? 0,
   }));
@@ -73,7 +76,7 @@ categoriesRoutes.get("/", async (c) => {
 ======================= */
 categoriesRoutes.post("/", adminAuth, async (c) => {
   const supabase = getSupabaseAdmin(c.env);
-  const { name } = await c.req.json();
+  const { name, display_order } = await c.req.json();
 
   if (!name) {
     return c.json({ message: "Category name is required" }, 400);
@@ -91,6 +94,7 @@ categoriesRoutes.post("/", adminAuth, async (c) => {
     .insert({
       name,
       slug,
+      display_order: display_order || 0,
       is_active: true,
       is_deleted: false,
     })
@@ -117,7 +121,7 @@ categoriesRoutes.post("/", adminAuth, async (c) => {
 categoriesRoutes.put("/:id", adminAuth, async (c) => {
   const supabase = getSupabaseAdmin(c.env);
   const id = c.req.param("id");
-  const { name } = await c.req.json();
+  const { name, display_order } = await c.req.json();
 
   if (!name) {
     return c.json({ message: "Category name is required" }, 400);
@@ -131,7 +135,7 @@ categoriesRoutes.put("/:id", adminAuth, async (c) => {
 
   const { data, error } = await supabase
     .from("categories")
-    .update({ name, slug })
+    .update({ name, slug, display_order: display_order ?? 0 })
     .eq("id", id)
     .eq("is_deleted", false)
     .select()

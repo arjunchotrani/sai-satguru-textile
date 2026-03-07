@@ -46,6 +46,7 @@ export interface Category {
   slug: string;
   image?: string;
   is_active?: number | boolean;
+  display_order?: number;
   status?: string;
 }
 
@@ -62,6 +63,7 @@ export interface SubCategory {
   slug: string;
   image?: string;
   is_active?: number | boolean;
+  display_order?: number;
   status?: string;
   parent_category?: { id: string };
 }
