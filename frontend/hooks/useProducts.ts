@@ -1,5 +1,5 @@
-import { useQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
-import { fetchProducts, fetchNewArrivals, fetchProductById } from '../services/products';
+import { useQuery, useInfiniteQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
+import { fetchProducts, fetchProductsPaginated, fetchNewArrivals, fetchProductById } from '../services/products';
 import { fetchCategories, fetchSubCategories } from '../services/categories';
 import { fetchBrands } from '../services/brands';
 import { Category, SubCategory, Product, Brand } from '../types';
@@ -53,6 +53,27 @@ export const useProducts = (filters: {
         queryFn: () => fetchProducts(filters),
         staleTime: 1000 * 60 * 5, // 5 minutes
         placeholderData: keepPreviousData,
+    });
+};
+
+export const useProductsInfinite = (filters: {
+    category_id?: string;
+    sub_category_id?: string;
+    brand_id?: string;
+    search?: string;
+    limit?: number;
+}) => {
+    return useInfiniteQuery({
+        queryKey: ['productsInfinite', filters],
+        queryFn: ({ pageParam = 1 }) => fetchProductsPaginated({ ...filters, page: pageParam as number }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => {
+            if (lastPage.products.length < lastPage.limit) {
+                return undefined;
+            }
+            return lastPage.page + 1;
+        },
+        staleTime: 1000 * 60 * 5,
     });
 };
 

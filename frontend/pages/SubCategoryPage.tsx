@@ -3,9 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { SEO } from '../components/SEO';
 import { ChevronRight, Filter, ChevronDown, AlignLeft, X } from 'lucide-react';
-import { useCategories, useSubCategories, useProducts, useBrands } from "../hooks/useProducts";
+import { useCategories, useSubCategories, useProductsInfinite, useBrands } from "../hooks/useProducts";
 
-import type { Category, SubCategory } from '../types';
+import type { Category, SubCategory, Product } from '../types';
 
 export const SubCategoryPage: React.FC = () => {
   const { categorySlug, subSlug } = useParams<{ categorySlug: string, subSlug: string }>();
@@ -30,10 +30,19 @@ export const SubCategoryPage: React.FC = () => {
 
   // 3. Fetch Products (React Query)
   const filter = category && subCategory
-    ? { category_id: category.id, sub_category_id: subCategory.id, limit: 100, includeImages: true }
+    ? { category_id: category.id, sub_category_id: subCategory.id, limit: 20 }
     : undefined;
 
-  const { data: products = [], isLoading: productsLoading } = useProducts(filter || {});
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useProductsInfinite(filter || {});
+
+  // Flatten the pages from infinite query
+  const products: Product[] = productsData?.pages.flatMap(page => page.products) || [];
 
   // 4. Fetch Brands
   const { data: allBrands = [] } = useBrands();
@@ -207,6 +216,22 @@ export const SubCategoryPage: React.FC = () => {
               <Link to={`/category/${category?.slug}`} className="inline-block mt-6 text-brand-gold text-xs tracking-widest uppercase hover:underline">
                 Back to {category?.label || category?.name}
               </Link>
+            </div>
+          )}
+
+          {/* Load More Button */}
+          {hasNextPage && (
+            <div className="flex justify-center mt-12 mb-8">
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className={`py-3 px-8 border border-brand-gold text-brand-gold rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${isFetchingNextPage
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:bg-brand-gold hover:text-black shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)]'
+                  }`}
+              >
+                {isFetchingNextPage ? 'Loading...' : 'Load More Products'}
+              </button>
             </div>
           )}
         </div>

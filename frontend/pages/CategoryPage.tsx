@@ -3,9 +3,9 @@ import { useParams, Link } from "react-router-dom";
 import { SEO } from "../components/SEO";
 import { ProductCard } from "../components/ProductCard";
 import { Filter, X, ChevronDown, ChevronRight } from "lucide-react";
-import { useProducts, useCategories, useBrands } from "../hooks/useProducts";
+import { useProductsInfinite, useCategories, useBrands } from "../hooks/useProducts";
 
-import type { Category, Brand } from "../types";
+import type { Category, Brand, Product } from "../types";
 
 const CategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -31,10 +31,19 @@ const CategoryPage: React.FC = () => {
 
   // 2. Fetch Products (React Query handles caching & background updates)
   const filter = matchedCategory
-    ? { category_id: matchedCategory.id, limit: 100, includeImages: true }
-    : { limit: 100, includeImages: true };
+    ? { category_id: matchedCategory.id, limit: 20 }
+    : { limit: 20 };
 
-  const { data: products = [], isLoading: productsLoading } = useProducts(filter);
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useProductsInfinite(filter);
+
+  // Flatten the pages from infinite query
+  const products: Product[] = productsData?.pages.flatMap(page => page.products) || [];
 
   // 3. Fetch Brands
   const { data: allBrands = [] } = useBrands();
@@ -202,6 +211,22 @@ const CategoryPage: React.FC = () => {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center border border-white/5 bg-white/[0.02] rounded-sm">
               <p className="text-white/30 uppercase tracking-[0.2em] text-xs">No products found for this selection</p>
+            </div>
+          )}
+
+          {/* Load More Button */}
+          {hasNextPage && (
+            <div className="flex justify-center mt-12 mb-8">
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className={`py-3 px-8 border border-brand-gold text-brand-gold rounded-full text-xs uppercase tracking-widest font-bold transition-all duration-300 ${isFetchingNextPage
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:bg-brand-gold hover:text-black shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)]'
+                  }`}
+              >
+                {isFetchingNextPage ? 'Loading...' : 'Load More Products'}
+              </button>
             </div>
           )}
         </div>

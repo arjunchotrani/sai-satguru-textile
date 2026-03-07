@@ -135,6 +135,53 @@ export async function fetchProducts(filters: {
 }
 
 /* ==========================================================
+   📦 PAGINATED PRODUCT FETCH (Category / SubCategory pages)
+   ⚡ Supports Infinite Scroll
+   ========================================================== */
+export async function fetchProductsPaginated(filters: {
+  category_id?: string;
+  sub_category_id?: string;
+  brand_id?: string;
+  search?: string;
+  limit?: number;
+  page?: number;
+} = {}) {
+  const params = new URLSearchParams();
+
+  if (filters.category_id) params.append("category_id", filters.category_id);
+  if (filters.sub_category_id) params.append("sub_category_id", filters.sub_category_id);
+  if (filters.brand_id) params.append("brand_id", filters.brand_id);
+  if (filters.search) params.append("search", filters.search);
+
+  params.append("limit", String(filters.limit || 50));
+  params.append("page", String(filters.page || 1));
+
+  const res = await fetch(`${API_BASE}/products?${params.toString()}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  const json = await res.json();
+  const rawData = json.data as BackendProduct[];
+
+  // Filter inactive products
+  const activeProducts = rawData.filter(p => {
+    if (p.is_active === false || (p.is_active as any) === 0) return false;
+    // @ts-ignore
+    if (p.status && String(p.status).toLowerCase() === 'inactive') return false;
+    return true;
+  });
+
+  return {
+    products: activeProducts.map(p => mapBackendProduct(p)),
+    total: json.total || activeProducts.length,
+    page: json.page || 1,
+    limit: json.limit || 50,
+  };
+}
+
+/* ==========================================================
    🆔 FETCH SINGLE PRODUCT (Product Detail Page)
    ✨ Helper to get full details + images
 ========================================================== */
