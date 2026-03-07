@@ -130,7 +130,7 @@ export const SubCategoryPage: React.FC = () => {
           {/* Filter Button */}
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 ${isFilterOpen
+            className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 relative z-40 ${isFilterOpen
               ? 'bg-brand-gold text-black border-brand-gold'
               : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
               }`}
@@ -143,7 +143,7 @@ export const SubCategoryPage: React.FC = () => {
 
         {/* Filter Panel (Mobile Drawer + Desktop Expand) */}
         <div className={`
-            fixed inset-0 z-[100] md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
+            fixed inset-0 z-[200] md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
             ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none md:max-h-0 md:mb-0'}
         `}>
           <div className={`
@@ -246,8 +246,8 @@ export const SubCategoryPage: React.FC = () => {
                     key={i}
                     onClick={() => setCurrentPage(i + 1)}
                     className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${currentPage === i + 1
-                        ? "border-brand-gold text-brand-gold bg-brand-gold/10"
-                        : "border-white/10 text-white/30 hover:border-white/30"
+                      ? "border-brand-gold text-brand-gold bg-brand-gold/10"
+                      : "border-white/10 text-white/30 hover:border-white/30"
                       }`}
                   >
                     {i + 1}
