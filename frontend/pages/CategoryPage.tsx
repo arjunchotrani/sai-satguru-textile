@@ -133,7 +133,7 @@ const CategoryPage: React.FC = () => {
         {/* Filter Panel (Mobile Drawer + Desktop Expand) */}
         <div className={`
             fixed inset-0 z-[200] md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
-            ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none md:max-h-0 md:mb-0'}
+            ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-md:invisible md:max-h-0 md:mb-0'}
         `}>
           <div className={`
                 fixed bottom-0 left-0 right-0 bg-[#111] border-t border-white/10 p-6 rounded-t-2xl shadow-2xl
