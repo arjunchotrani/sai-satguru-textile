@@ -164,30 +164,37 @@ export const BrandLandingPage: React.FC = () => {
                     <span className="text-brand-gold font-bold">{brand.name}</span>
                 </div>
 
-                {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-8 border-b border-white/10 pb-6 gap-4">
-                    <div>
-                        <h1 className="font-serif text-3xl md:text-5xl mb-2">{brand.name}</h1>
-                        <p className="text-white/60 text-sm">
-                            {allFilteredProducts.length} Product{allFilteredProducts.length !== 1 && 's'} Found
+                {/* Hero Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b border-white/10 pb-8 animate-fade-in-up">
+                    <div className="max-w-2xl text-left">
+                        <span className="text-brand-gold text-xs font-bold tracking-[0.3em] uppercase mb-4 block">
+                            Brand Collection
+                        </span>
+                        <h1 className="font-serif text-3xl md:text-6xl text-white mb-2 md:mb-4">
+                            {brand.name}
+                        </h1>
+                        <p className="text-white/60 text-xs md:text-base font-light tracking-wide leading-relaxed">
+                            {allFilteredProducts.length} Premium Product{allFilteredProducts.length !== 1 && 's'} Available
                         </p>
                     </div>
 
-                    {/* NEW: Filter Button (Reference Style) */}
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsDrawerOpen(true)}
-                            className="group flex items-center gap-3 px-6 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:border-brand-gold/50 transition-all duration-300 relative"
-                        >
-                            <Filter size={18} className="text-white/60 group-hover:text-brand-gold transition-colors" />
-                            <span className="text-xs font-bold uppercase tracking-wider">Filter</span>
-                            {activeFiltersCount > 0 && (
-                                <span className="absolute -top-2 -right-2 w-5 h-5 bg-brand-gold text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg animate-fade-in">
-                                    {activeFiltersCount}
-                                </span>
-                            )}
-                        </button>
-                    </div>
+                    {/* Filter Button */}
+                    <button
+                        onClick={() => setIsDrawerOpen(true)}
+                        className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 relative z-40 ${isDrawerOpen
+                            ? 'bg-brand-gold text-black border-brand-gold'
+                            : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
+                            }`}
+                    >
+                        <Filter size={16} />
+                        <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
+                        {activeFiltersCount > 0 && (
+                            <span className="ml-1 w-5 h-5 bg-brand-gold text-black text-[10px] font-bold rounded-full flex items-center justify-center shadow-lg">
+                                {activeFiltersCount}
+                            </span>
+                        )}
+                        <ChevronDown size={14} className={`transition-transform duration-300 ${isDrawerOpen ? 'rotate-180' : ''}`} />
+                    </button>
                 </div>
 
                 {/* 🔹 Sidebar Filter Drawer Overlay (Portaled to Body) */}
