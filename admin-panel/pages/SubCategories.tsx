@@ -474,7 +474,7 @@ const SubCategories: React.FC = () => {
                     onChange={(e) =>
                       setCurrentSub({
                         ...currentSub,
-                        display_order: parseInt(e.target.value) || 0,
+                        display_order: parseInt(e.target.value) ?? 100,
                       })
                     }
                     placeholder="e.g. 1"

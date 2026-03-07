@@ -429,7 +429,7 @@ const Categories: React.FC = () => {
                     onChange={(e) =>
                       setCurrentCategory({
                         ...currentCategory,
-                        display_order: parseInt(e.target.value) || 0,
+                        display_order: parseInt(e.target.value) ?? 100,
                       })
                     }
                     placeholder="e.g. 1"

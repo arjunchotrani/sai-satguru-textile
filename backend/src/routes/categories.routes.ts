@@ -94,7 +94,7 @@ categoriesRoutes.post("/", adminAuth, async (c) => {
     .insert({
       name,
       slug,
-      display_order: display_order || 0,
+      display_order: display_order ?? 100,
       is_active: true,
       is_deleted: false,
     })
@@ -135,7 +135,7 @@ categoriesRoutes.put("/:id", adminAuth, async (c) => {
 
   const { data, error } = await supabase
     .from("categories")
-    .update({ name, slug, display_order: display_order ?? 0 })
+    .update({ name, slug, display_order: display_order ?? 100 })
     .eq("id", id)
     .eq("is_deleted", false)
     .select()
