@@ -275,7 +275,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* MIDDLE PANEL: CATEGORIES (Col 2) */}
-          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-4 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full hidden md:flex'
+          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-32 md:pt-4 px-6 md:px-0 bg-black md:bg-transparent absolute md:relative top-0 left-0 transition-all duration-500 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 pointer-events-auto flex' : 'md:opacity-0 md:translate-x-full opacity-0 translate-x-10 pointer-events-none hidden md:flex'
             }`}>
             <button
               onClick={() => setActivePanel('main')}
