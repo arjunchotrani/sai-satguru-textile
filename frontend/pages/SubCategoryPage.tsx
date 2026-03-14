@@ -145,32 +145,39 @@ export const SubCategoryPage: React.FC = () => {
           </div>
         </div>
  
-        {/* Transparent Brand Filter Section (Always Visible) */}
+        {/* Horizontal Brand Filter Bar (Always Visible & Compact) */}
         {availableBrands.length > 0 && (
-          <div className="mb-12 animate-fade-in-up delay-100">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Shop by Brand</h3>
-              <button
-                onClick={() => setSelectedBrands(new Set())}
-                className="text-[10px] text-white/30 hover:text-brand-gold underline decoration-white/10 tracking-widest uppercase transition-colors"
-                title="Clear Filters"
-              >
-                Clear All
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-2 md:gap-3">
-              {availableBrands.map(brand => (
+          <div className="mb-10 animate-fade-in-up delay-100">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Filter by Brand</h3>
+              {selectedBrands.size > 0 && (
                 <button
-                  key={brand.id}
-                  onClick={() => toggleBrand(brand.id)}
-                  className={`px-4 py-2 md:py-2 text-[10px] md:text-xs uppercase tracking-widest border rounded-full transition-all duration-300 ${selectedBrands.has(brand.id)
-                    ? 'bg-brand-gold text-black border-brand-gold font-bold shadow-[0_0_15px_rgba(212,175,55,0.3)]'
-                    : 'bg-white/5 text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
-                    }`}
+                  onClick={() => setSelectedBrands(new Set())}
+                  className="text-[10px] text-brand-gold hover:text-white underline decoration-brand-gold/30 tracking-widest uppercase transition-all"
                 >
-                  {brand.name}
+                  Clear ({selectedBrands.size})
                 </button>
-              ))}
+              )}
+            </div>
+            
+            <div className="relative group">
+              <div className="flex overflow-x-auto pb-4 gap-2 no-scrollbar scroll-smooth">
+                {availableBrands.map(brand => (
+                  <button
+                    key={brand.id}
+                    onClick={() => toggleBrand(brand.id)}
+                    className={`flex-none px-5 py-2 text-[10px] md:text-xs uppercase tracking-widest border rounded-full transition-all duration-300 whitespace-nowrap ${selectedBrands.has(brand.id)
+                      ? 'bg-brand-gold text-black border-brand-gold font-bold shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                      : 'bg-white/5 text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
+                      }`}
+                  >
+                    {brand.name}
+                  </button>
+                ))}
+              </div>
+              {/* Subtle fade edges for horizontal scroll */}
+              <div className="absolute top-0 right-0 h-[calc(100%-1rem)] w-12 bg-gradient-to-l from-black to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-0 left-0 h-[calc(100%-1rem)] w-12 bg-gradient-to-r from-black to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </div>
         )}
