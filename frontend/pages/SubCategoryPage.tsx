@@ -126,7 +126,24 @@ export const SubCategoryPage: React.FC = () => {
               Part of our premium <span className="text-white font-medium">{category?.label || category?.name}</span> collection.
               {totalProducts > 0 && ` Showing ${totalProducts} items.`}
             </p>
-          </        </div>
+          </div>
+ 
+          <div className="flex items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
+            {/* Sort Dropdown - Restored */}
+            <div className="relative flex-1 md:flex-none">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full appearance-none bg-white/5 text-white border border-white/10 px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold focus:outline-none focus:border-brand-gold/50 transition-all cursor-pointer pr-10"
+              >
+                <option value="latest" className="bg-[#111]">Latest</option>
+                <option value="price_asc" className="bg-[#111]">Price: Low to High</option>
+                <option value="price_desc" className="bg-[#111]">Price: High to Low</option>
+              </select>
+              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/50" />
+            </div>
+          </div>
+        </div>
  
         {/* Transparent Brand Filter Section (Always Visible) */}
         {availableBrands.length > 0 && (
@@ -156,7 +173,7 @@ export const SubCategoryPage: React.FC = () => {
               ))}
             </div>
           </div>
-        )}</div>
+        )}
 
         {/* Products Grid */}
         <div className="w-full">
