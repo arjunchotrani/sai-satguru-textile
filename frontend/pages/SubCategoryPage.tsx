@@ -191,14 +191,14 @@ export const SubCategoryPage: React.FC = () => {
             </div>
 
             {availableBrands.length > 0 ? (
-              <div className="flex flex-wrap gap-3 max-h-[60vh] overflow-y-auto md:max-h-none">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 {availableBrands.map(brand => (
                   <button
                     key={brand.id}
                     onClick={() => toggleBrand(brand.id)}
-                    className={`px-4 py-3 md:py-2 text-xs uppercase tracking-widest border rounded-lg md:rounded-none transition-all duration-300 ${selectedBrands.has(brand.id)
+                    className={`px-4 py-2 md:py-2 text-[10px] md:text-xs uppercase tracking-widest border rounded-full transition-all duration-300 ${selectedBrands.has(brand.id)
                       ? 'bg-brand-gold text-black border-brand-gold font-bold'
-                      : 'bg-black/50 md:bg-transparent text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
+                      : 'bg-white/5 text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
                       }`}
                   >
                     {brand.name}
@@ -207,7 +207,7 @@ export const SubCategoryPage: React.FC = () => {
               </div>
             ) : (
               <div className="py-8 text-center border border-dashed border-white/10 rounded-lg">
-                <p className="text-white/40 text-sm italic">No brands available for this collection.</p>
+                <p className="text-white/40 text-[10px] md:text-sm italic">No brands available for this collection.</p>
               </div>
             )}
 
