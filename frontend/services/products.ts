@@ -101,7 +101,7 @@ export async function fetchProducts(filters: {
   }
 
   if (filters.brand_id) {
-    params.append("brand_id", filters.brand_id);
+    params.append("brand", filters.brand_id);
   }
 
   if (filters.search) {
@@ -156,7 +156,7 @@ export async function fetchProductsPaginated(filters: {
 
   if (filters.category_id) params.append("category_id", filters.category_id);
   if (filters.sub_category_id) params.append("sub_category_id", filters.sub_category_id);
-  if (filters.brand_id) params.append("brand_id", filters.brand_id);
+  if (filters.brand_id) params.append("brand", filters.brand_id);
   if (filters.search) params.append("search", filters.search);
 
   params.append("limit", String(filters.limit || 50));
