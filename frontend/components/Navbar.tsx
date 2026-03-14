@@ -7,6 +7,7 @@ import { useCurrency } from './CurrencyContext';
 import { useCategories, useAllSubCategories } from '../hooks/useProducts';
 import { SmartLink } from './SmartLink';
 import { Category, SubCategory } from '../types';
+import { CONTACT_INFO } from '../constants';
 
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -264,9 +265,9 @@ export const Navbar: React.FC = () => {
             </nav>
 
             <div className="mt-auto space-y-6">
-              <div className="flex items-center gap-6">
-                <a href="#" className="text-white/40 hover:text-white transition-colors"><Instagram size={20} /></a>
-                <a href="#" className="text-white/40 hover:text-white transition-colors"><Facebook size={20} /></a>
+              <div className="flex items-center gap-6 z-50">
+                <a href={CONTACT_INFO.instagram} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors"><Instagram size={20} /></a>
+                <a href={CONTACT_INFO.facebook} target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors"><Facebook size={20} /></a>
               </div>
               <p className="text-[10px] uppercase tracking-widest text-white/20">
                 © 2026 Sai Satguru Textile.
