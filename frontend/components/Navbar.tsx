@@ -225,7 +225,7 @@ export const Navbar: React.FC = () => {
         <div className="container mx-auto h-full px-6 md:px-12 pt-32 pb-[120px] md:pb-12 flex flex-col md:flex-row">
 
           {/* LEFT PANEL: MAIN NAVIGATION */}
-          <div className={`w-full md:w-[32%] lg:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 absolute md:relative top-0 left-0 pt-32 md:pt-0 px-6 md:px-0 bg-black md:bg-transparent ${activePanel === 'collections' ? '-translate-x-full opacity-0 pointer-events-none md:translate-x-0 md:opacity-100 md:pointer-events-auto' : 'translate-x-0 opacity-100 pointer-events-auto'
+          <div className={`w-full md:w-[32%] lg:w-[28%] flex flex-col justify-between h-full transition-all duration-500 md:border-r border-white/5 absolute md:relative top-0 left-0 pt-32 md:pt-0 px-6 md:px-0 bg-black md:bg-transparent z-0 ${activePanel === 'collections' ? '-translate-x-full opacity-0 md:translate-x-0 md:opacity-100' : 'translate-x-0 opacity-100'
             }`}>
             <nav className="flex flex-col items-start gap-4 md:gap-6 mb-8">
               {[
@@ -275,7 +275,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* MIDDLE PANEL: CATEGORIES (Col 2) */}
-          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-32 md:pt-4 px-6 md:px-0 bg-black md:bg-transparent absolute md:relative top-0 left-0 transition-all duration-500 z-10 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 pointer-events-auto flex' : 'md:opacity-0 md:translate-x-full opacity-0 translate-x-10 pointer-events-none hidden md:flex'
+          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-32 md:pt-4 px-6 md:px-0 bg-black md:bg-transparent absolute md:relative top-0 left-0 transition-all duration-500 z-50 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full opacity-0 translate-x-10 hidden md:flex'
             }`}>
             <button
               onClick={() => setActivePanel('main')}
