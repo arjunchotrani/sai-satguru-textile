@@ -343,21 +343,42 @@ export const BrandLandingPage: React.FC = () => {
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
                     <div className="mt-16 mb-8 flex items-center justify-center gap-2">
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                            <button
-                                key={pageNum}
-                                onClick={() => {
-                                    setCurrentPage(pageNum);
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                }}
-                                className={`w-10 h-10 rounded-full text-sm font-bold transition-all duration-300 border flex items-center justify-center ${currentPage === pageNum
-                                    ? 'bg-brand-gold border-brand-gold text-black shadow-lg shadow-brand-gold/30'
-                                    : 'bg-white/5 border-white/10 text-white/40 hover:border-brand-gold/50 hover:text-white'
-                                    }`}
-                            >
-                                {pageNum}
-                            </button>
-                        ))}
+                        {(() => {
+                            const pages: (number | string)[] = [];
+                            if (totalPages <= 7) {
+                                for (let i = 1; i <= totalPages; i++) pages.push(i);
+                            } else {
+                                if (currentPage <= 4) {
+                                    pages.push(1, 2, 3, 4, 5, '...', totalPages);
+                                } else if (currentPage >= totalPages - 3) {
+                                    pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+                                } else {
+                                    pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                                }
+                            }
+
+                            return pages.map((p, i) => (
+                                p === '...' ? (
+                                    <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-white/50">
+                                        ...
+                                    </span>
+                                ) : (
+                                    <button
+                                        key={i}
+                                        onClick={() => {
+                                            setCurrentPage(p as number);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className={`w-10 h-10 rounded-full text-sm font-bold transition-all duration-300 border flex items-center justify-center ${currentPage === p
+                                            ? 'bg-brand-gold border-brand-gold text-black shadow-lg shadow-brand-gold/30'
+                                            : 'bg-white/5 border-white/10 text-white/40 hover:border-brand-gold/50 hover:text-white'
+                                            }`}
+                                    >
+                                        {p}
+                                    </button>
+                                )
+                            ));
+                        })()}
                     </div>
                 )}
 

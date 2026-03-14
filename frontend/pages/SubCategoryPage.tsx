@@ -263,18 +263,39 @@ export const SubCategoryPage: React.FC = () => {
               </button>
 
               <div className="flex gap-4">
-                {Array.from({ length: totalPages }).map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${currentPage === i + 1
-                      ? "border-brand-gold text-brand-gold bg-brand-gold/10"
-                      : "border-white/10 text-white/30 hover:border-white/30"
-                      }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                {(() => {
+                  const pages: (number | string)[] = [];
+                  if (totalPages <= 7) {
+                    for (let i = 1; i <= totalPages; i++) pages.push(i);
+                  } else {
+                    if (currentPage <= 4) {
+                      pages.push(1, 2, 3, 4, 5, '...', totalPages);
+                    } else if (currentPage >= totalPages - 3) {
+                      pages.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+                    } else {
+                      pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                    }
+                  }
+
+                  return pages.map((p, i) => (
+                    p === '...' ? (
+                      <span key={`ellipsis-${i}`} className="w-8 h-8 flex items-center justify-center text-[10px] text-white/50">
+                        ...
+                      </span>
+                    ) : (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(p as number)}
+                        className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${currentPage === p
+                          ? "border-brand-gold text-brand-gold bg-brand-gold/10"
+                          : "border-white/10 text-white/30 hover:border-white/30"
+                          }`}
+                      >
+                        {p}
+                      </button>
+                    )
+                  ));
+                })()}
               </div>
 
               <button
