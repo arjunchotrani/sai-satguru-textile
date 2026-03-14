@@ -275,11 +275,14 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* MIDDLE PANEL: CATEGORIES (Col 2) */}
-          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-32 md:pt-4 px-6 md:px-0 bg-black md:bg-transparent absolute md:relative top-0 left-0 transition-all duration-500 z-50 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100 flex' : 'md:opacity-0 md:translate-x-full opacity-0 translate-x-10 hidden md:flex'
+          <div className={`w-full md:w-[32%] lg:w-[28%] h-full md:border-r border-white/5 md:pl-8 lg:pl-12 flex flex-col justify-start pt-32 md:pt-4 px-6 md:px-0 bg-black md:bg-transparent absolute md:relative top-0 left-0 transition-all duration-500 z-50 ${(activePanel === 'collections' || hoveredLink === 'collections') ? 'translate-x-0 opacity-100' : 'md:opacity-0 md:translate-x-full opacity-0 translate-x-10 pointer-events-none md:pointer-events-auto'
             }`}>
             <button
-              onClick={() => setActivePanel('main')}
-              className="md:hidden flex items-center gap-2 text-white/40 mb-8 uppercase tracking-widest text-xs py-2 px-1 -ml-1 active:text-white"
+              onClick={() => {
+                setActivePanel('main');
+                setHoveredLink(null);
+              }}
+              className="md:hidden flex items-center gap-2 text-white/40 mb-8 uppercase tracking-widest text-xs py-2 px-1 -ml-1 active:text-white relative z-50"
             >
               <ChevronRight className="rotate-180" size={14} /> Back to Menu
             </button>
