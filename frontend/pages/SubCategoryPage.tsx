@@ -126,108 +126,37 @@ export const SubCategoryPage: React.FC = () => {
               Part of our premium <span className="text-white font-medium">{category?.label || category?.name}</span> collection.
               {totalProducts > 0 && ` Showing ${totalProducts} items.`}
             </p>
-          </div>
-
-          <div className="flex items-center gap-3 w-full md:w-auto mt-6 md:mt-0">
-            {/* Sort Dropdown */}
-            <div className="relative flex-1 md:flex-none">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full appearance-none bg-white/5 text-white border border-white/10 px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-bold focus:outline-none focus:border-brand-gold/50 transition-all cursor-pointer pr-10"
-              >
-                <option value="latest" className="bg-[#111]">Latest</option>
-                <option value="price_asc" className="bg-[#111]">Price: Low to High</option>
-                <option value="price_desc" className="bg-[#111]">Price: High to Low</option>
-              </select>
-              <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/50" />
-            </div>
-
-            {/* Filter Button */}
-            <button
-              onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className={`group flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 mt-6 md:mt-0 relative z-40 ${isFilterOpen
-                ? 'bg-brand-gold text-black border-brand-gold'
-                : 'bg-white/5 text-white border-white/10 hover:border-brand-gold/50'
-                }`}
-            >
-              <Filter size={16} />
-              <span className="text-xs uppercase tracking-widest font-bold">Filters</span>
-              <ChevronDown size={14} className={`transition-transform duration-300 ${isFilterOpen ? 'rotate-180' : ''}`} />
-            </button>
-          </div>
-        </div>
-
-        {/* Filter Panel (Mobile Drawer + Desktop Expand) */}
-        <div
-          className={`
-            fixed inset-0 z-[200] flex flex-col justify-end md:block md:static md:z-auto bg-black/80 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none transition-opacity duration-300
-            ${isFilterOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none max-md:invisible md:max-h-0 md:mb-0'}
-          `}
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsFilterOpen(false);
-          }}
-        >
-          <div className={`
-                w-full bg-[#111] border-t border-white/10 p-6 pb-12 rounded-t-2xl shadow-2xl mt-auto
-                md:mt-0 md:static md:bg-white/5 md:border md:rounded-sm md:p-8 md:mb-12 md:shadow-none
-                transition-all duration-300 ease-out
-                ${isFilterOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 md:translate-y-0 md:opacity-100'}
-            `}>
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-serif text-xl text-white">Filter by Brand</h3>
-              <button
-                onClick={() => setIsFilterOpen(false)}
-                className="p-2 bg-white/5 rounded-full hover:bg-white/10 transition-colors md:hidden"
-              >
-                <X size={20} className="text-white" />
-              </button>
+          </        </div>
+ 
+        {/* Transparent Brand Filter Section (Always Visible) */}
+        {availableBrands.length > 0 && (
+          <div className="mb-12 animate-fade-in-up delay-100">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-bold">Shop by Brand</h3>
               <button
                 onClick={() => setSelectedBrands(new Set())}
-                className="hidden md:block text-xs text-white/40 hover:text-white underline decoration-white/30 tracking-widest uppercase"
+                className="text-[10px] text-white/30 hover:text-brand-gold underline decoration-white/10 tracking-widest uppercase transition-colors"
+                title="Clear Filters"
               >
                 Clear All
               </button>
             </div>
-
-            {availableBrands.length > 0 ? (
-              <div className="flex flex-wrap gap-2 md:gap-3">
-                {availableBrands.map(brand => (
-                  <button
-                    key={brand.id}
-                    onClick={() => toggleBrand(brand.id)}
-                    className={`px-4 py-2 md:py-2 text-[10px] md:text-xs uppercase tracking-widest border rounded-full transition-all duration-300 ${selectedBrands.has(brand.id)
-                      ? 'bg-brand-gold text-black border-brand-gold font-bold'
-                      : 'bg-white/5 text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
-                      }`}
-                  >
-                    {brand.name}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="py-8 text-center border border-dashed border-white/10 rounded-lg">
-                <p className="text-white/40 text-[10px] md:text-sm italic">No brands available for this collection.</p>
-              </div>
-            )}
-
-            {/* Mobile Actions */}
-            <div className="mt-8 flex gap-4 md:hidden">
-              <button
-                onClick={() => setSelectedBrands(new Set())}
-                className="flex-1 py-3 border border-white/10 rounded-full text-xs uppercase tracking-widest text-white/70"
-              >
-                Clear
-              </button>
-              <button
-                onClick={() => setIsFilterOpen(false)}
-                className="flex-1 py-3 bg-brand-gold text-black rounded-full text-xs uppercase tracking-widest font-bold shadow-lg"
-              >
-                Apply ({totalProducts})
-              </button>
+            <div className="flex flex-wrap gap-2 md:gap-3">
+              {availableBrands.map(brand => (
+                <button
+                  key={brand.id}
+                  onClick={() => toggleBrand(brand.id)}
+                  className={`px-4 py-2 md:py-2 text-[10px] md:text-xs uppercase tracking-widest border rounded-full transition-all duration-300 ${selectedBrands.has(brand.id)
+                    ? 'bg-brand-gold text-black border-brand-gold font-bold shadow-[0_0_15px_rgba(212,175,55,0.3)]'
+                    : 'bg-white/5 text-white/60 border-white/10 hover:border-brand-gold/50 hover:text-white'
+                    }`}
+                >
+                  {brand.name}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
+        )}</div>
 
         {/* Products Grid */}
         <div className="w-full">
