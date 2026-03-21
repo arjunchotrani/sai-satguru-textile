@@ -182,6 +182,70 @@ productsRoutes.get("/", async (c) => {
 });
 
 /* =======================
+   🌍 GET SINGLE PRODUCT BY SLUG (PUBLIC)
+======================= */
+productsRoutes.get("/by-slug/:slug", async (c) => {
+  const slug = c.req.param("slug");
+  const isAdmin = c.req.url.includes("/admin/products");
+
+  const cacheKey = `product:detail:slug:${slug}:${isAdmin ? "admin" : "public"}`;
+  const cached = await getCache(c.env, cacheKey);
+  if (cached) return c.json(cached);
+
+  const supabase = c.get("supabase") || getSupabaseAdmin(c.env);
+
+  let query = supabase
+    .from("products")
+    .select(`
+      id, name, slug, category_id, sub_category_id,
+      brand_id, brand_type, brand, price, description,
+      is_active, created_at,
+      product_images (image_url, is_primary, display_order),
+      brands (name)
+    `)
+    .eq("slug", slug)
+    .eq("is_deleted", false);
+
+  if (!isAdmin) query = query.eq("is_active", true);
+
+  const { data, error } = await query.single();
+
+  if (error || !data) {
+    return c.json(
+      { success: false, message: "Product not found" }, 
+      404
+    );
+  }
+
+  const sortedImages = (
+    (data as any).product_images || []
+  ).sort((a: any, b: any) => {
+    if (b.is_primary && !a.is_primary) return 1;
+    if (!b.is_primary && a.is_primary) return -1;
+    return (a.display_order || 0) - (b.display_order || 0);
+  });
+
+  const formatted = {
+    ...data,
+    brand: (data as any).brands?.name || data.brand || null,
+    brand_type: data.brand_type || "Non-Branded",
+    basePriceINR: data.price,
+    brandName: (data as any).brands?.name || data.brand || null,
+    brandSlug: null,
+    images: sortedImages.map((img: any) => img.image_url),
+    categoryId: data.category_id,
+    subCategoryId: data.sub_category_id,
+    product_images: undefined,
+    brands: undefined,
+  };
+
+  const response = { success: true, data: formatted };
+  await setCache(c.env, cacheKey, response, CACHE_TTL.MEDIUM);
+  c.header("Cache-Control", "public, s-maxage=300");
+  return c.json(response);
+});
+
+/* =======================
    🌍 GET SINGLE PRODUCT (PUBLIC)
 ======================= */
 productsRoutes.get("/:id", async (c) => {
@@ -235,8 +299,11 @@ productsRoutes.get("/:id", async (c) => {
 
   const { data, error } = await query.single();
 
-  if (error) {
-    return c.json({ success: false, message: error.message }, 500);
+  if (error || !data) {
+    return c.json(
+      { success: false, message: "Product not found" }, 
+      404
+    );
   }
 
   // Sort images: primary first, then display_order
@@ -362,15 +429,6 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     );
   }
 
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  // Append a short random string to ensure uniqueness
-  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
-
   // Resolve brand_id if missing but brand name provided
   let resolvedBrandId = brand_id;
   if (!resolvedBrandId && brand && brand.toLowerCase() !== "generic") {
@@ -386,7 +444,6 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     .from("products")
     .update({
       name,
-      slug: uniqueSlug,
       category_id,
       sub_category_id: sub_category_id || null,
       brand_id: resolvedBrandId || null,

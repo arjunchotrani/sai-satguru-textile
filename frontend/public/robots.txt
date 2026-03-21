@@ -1,4 +1,16 @@
 User-agent: *
 Allow: /
+Allow: /product/
+Allow: /category/
+Allow: /brands/
+Allow: /new-arrivals/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login/
+Disallow: /unauthorized/
 
+# Sitemap location
 Sitemap: https://saisatgurutextile.com/sitemap.xml
+Sitemap: https://saisatgurutextile.com/sitemap-products.xml
+Sitemap: https://saisatgurutextile.com/sitemap-categories.xml
+Sitemap: https://saisatgurutextile.com/sitemap-pages.xml

@@ -20,6 +20,7 @@ function mapBackendProduct(
   return {
     id: String(p.id).replace(/\s+/g, '-'),
     name: p.name || 'Untitled Product',
+    slug: p.slug,
     categoryId: p.category_id,
     subCategoryId: p.sub_category_id ?? undefined,
     brandId: p.brand_id ?? undefined,

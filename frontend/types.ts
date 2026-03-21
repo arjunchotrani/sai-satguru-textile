@@ -25,6 +25,7 @@ export interface BackendProduct {
 export interface Product {
   id: string;
   name: string;
+  slug: string;
   categoryId: string;
   subCategoryId?: string;
   brandId?: string;

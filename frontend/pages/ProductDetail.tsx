@@ -17,11 +17,11 @@ const GLOBAL_NOTES = [
 ];
 
 export const ProductDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const { formatPrice } = useCurrency();
 
   // React Query Hooks (High Performance)
-  const { data: product, isLoading: productLoading, error: productError } = useProductDetail(id);
+  const { data: product, isLoading: productLoading, error: productError } = useProductDetail(slug);
   const { data: allCategories } = useCategories();
   const { data: subCategories } = useSubCategories(product?.categoryId);
 
@@ -406,7 +406,9 @@ export const ProductDetail: React.FC = () => {
   }, [product?.description]);
 
   // Updated WhatsApp Message Logic
-  const currentUrl = window.location.href;
+  const currentUrl = slug 
+    ? `https://saisatgurutextile.com/product/${slug}` 
+    : window.location.href;
   const whatsappLink = React.useMemo(() => {
     if (!product) return '';
     const whatsappMessage = `Hello Sai Satguru Textiles,
@@ -476,8 +478,17 @@ Please share price, MOQ and availability.`;
   return (
     <div className="bg-black w-full pt-[80px] pb-4">
       <SEO
-        title={product.name}
-        description={product.description}
+        title={`${product.name} | Wholesale Textile Surat`}
+        description={
+          product.description
+            ? product.description
+                .replace(/\n/g, " ")
+                .replace(/[*_~]/g, "")
+                .substring(0, 150)
+                .trim() + "..."
+            : `Buy ${product.name} wholesale from Surat. Best prices 
+               for retailers and exporters. WhatsApp to order!`
+        }
         image={activeImage || product.images[0]}
         url={currentUrl}
         type="product"

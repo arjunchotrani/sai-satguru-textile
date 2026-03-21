@@ -4,6 +4,8 @@ import { fetchCategories, fetchSubCategories } from '../services/categories';
 import { fetchBrands } from '../services/brands';
 import { Category, SubCategory, Product, Brand } from '../types';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 export const useCategories = () => {
     return useQuery<Category[]>({
         queryKey: ['categories'],
@@ -108,34 +110,27 @@ export const useNewArrivals = (page: number = 1, limit: number = 12) => {
 /**
  * Hook for Product Detail with smart initial data from cache
  */
-export const useProductDetail = (id?: string) => {
-    const queryClient = useQueryClient();
-    const sanitizedId = id?.replace(/\s+/g, '-');
-
-    return useQuery<Product | null>({
-        queryKey: ['product', sanitizedId],
-        queryFn: () => sanitizedId ? fetchProductById(sanitizedId) : Promise.resolve(null),
-        enabled: !!sanitizedId,
-        staleTime: 1000 * 60 * 10, // 10 minutes
-        initialData: () => {
-            if (!sanitizedId) return undefined;
-
-            // Try to find product in other queries to show it instantly
-            const allProductsQueries = queryClient.getQueriesData<Product[]>({ queryKey: ['products'] });
-            for (const [_, data] of allProductsQueries) {
-                const found = data?.find(p => p.id === sanitizedId);
-                if (found) return found;
-            }
-
-            const newArrivalsQueries = queryClient.getQueriesData<{ products: Product[] }>({ queryKey: ['newArrivals'] });
-            for (const [_, data] of newArrivalsQueries) {
-                const found = data?.products.find(p => p.id === sanitizedId);
-                if (found) return found;
-            }
-
-            return undefined;
-        }
-    });
+export const useProductDetail = (slug?: string) => {
+  return useQuery({
+    queryKey: ["product", slug],
+    queryFn: async () => {
+      if (!slug) throw new Error("No slug provided");
+      const res = await fetch(
+        `${API_BASE}/products/by-slug/${slug}`
+      );
+      if (res.status === 404) {
+        throw new Error("Product not found");
+      }
+      if (!res.ok) {
+        throw new Error("Failed to fetch product");
+      }
+      const json = await res.json();
+      return json.data;
+    },
+    enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
 };
 
 /**

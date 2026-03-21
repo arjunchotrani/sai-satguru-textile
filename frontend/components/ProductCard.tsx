@@ -48,9 +48,9 @@ export const ProductCard: React.FC<Props> = ({ product, priority = false }) => {
 
   return (
     <SmartLink
-      to={`/product/${product.id}`}
+      to={`/product/${product.slug}`}
       prefetchType="product"
-      prefetchId={product.id}
+      prefetchId={product.slug}
       targetComponent={() => import("../pages/ProductDetail")}
       className="group relative bg-[#0a0a0a] border border-white/5 overflow-hidden block hover:border-brand-gold/50 transition-colors"
     >

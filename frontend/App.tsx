@@ -122,7 +122,7 @@ const App: React.FC = () => {
                                     <Route path="/" element={<PageTransition><Home /></PageTransition>} />
                                     <Route path="/category/:categorySlug" element={<PageTransition><CategoryPage /></PageTransition>} />
                                     <Route path="/category/:categorySlug/:subCategorySlug" element={<PageTransition><SubCategoryPage /></PageTransition>} />
-                                    <Route path="/product/:id" element={<PageTransition><ProductDetail /></PageTransition>} />
+                                    <Route path="/product/:slug" element={<PageTransition><ProductDetail /></PageTransition>} />
                                     <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
                                     <Route path="/new-arrivals" element={<PageTransition><NewArrivals /></PageTransition>} />
                                     <Route path="/about" element={<PageTransition><About /></PageTransition>} />

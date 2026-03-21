@@ -69,20 +69,21 @@ sitemapRoutes.get("/sitemap.xml", (c) => {
    /sitemap-pages.xml → Static Pages
 ===================================================== */
 sitemapRoutes.get("/sitemap-pages.xml", (c) => {
-    const today = new Date().toISOString().split("T")[0];
+    const fixedDate = "2026-03-01"; // Fixed date to prevent redundant indexing
 
     const pages = [
-        { path: "/", changefreq: "daily", priority: "1.0" },
-        { path: "/about", changefreq: "monthly", priority: "0.5" },
-        { path: "/contact", changefreq: "monthly", priority: "0.5" },
-        { path: "/terms", changefreq: "monthly", priority: "0.3" },
+        { path: "/", lastmod: fixedDate, changefreq: "daily", priority: "1.0" },
+        { path: "/about", lastmod: fixedDate, changefreq: "monthly", priority: "0.5" },
+        { path: "/contact", lastmod: fixedDate, changefreq: "monthly", priority: "0.5" },
+        { path: "/new-arrivals", lastmod: fixedDate, changefreq: "daily", priority: "0.8" },
+        { path: "/brands", lastmod: fixedDate, changefreq: "daily", priority: "0.7" },
     ];
 
     const urls = pages
         .map(
             (p) => `  <url>
     <loc>${DOMAIN}${p.path}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${p.lastmod}</lastmod>
     <changefreq>${p.changefreq}</changefreq>
     <priority>${p.priority}</priority>
   </url>`
@@ -274,7 +275,7 @@ sitemapRoutes.get("/sitemap-subcategories.xml", async (c) => {
 
     const { data, error } = await supabase
         .from("sub_categories")
-        .select("slug, created_at")
+        .select("slug, created_at, parent_category:categories(slug)")
         .eq("is_active", true)
         .eq("is_deleted", false)
         .order("created_at", { ascending: false });
@@ -288,9 +289,9 @@ sitemapRoutes.get("/sitemap-subcategories.xml", async (c) => {
 
     const urls = (data || [])
         .map(
-            (sub) => `  <url>
-    <loc>${DOMAIN}/subcategory/${sub.slug}</loc>
-    <lastmod>${formatDate(sub.created_at)}</lastmod>
+            (p: any) => `  <url>
+    <loc>${DOMAIN}/category/${p.parent_category?.slug}/${p.slug}</loc>
+    <lastmod>${formatDate(p.created_at)}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>`
