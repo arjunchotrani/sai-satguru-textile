@@ -1,5 +1,5 @@
 import { useQuery, useInfiniteQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
-import { fetchProducts, fetchProductsPaginated, fetchNewArrivals, fetchProductById, mapBackendProduct } from '../services/products';
+import { fetchProducts, fetchProductsPaginated, fetchNewArrivals, fetchProductBySlug, mapBackendProduct } from '../services/products';
 import { fetchCategories, fetchSubCategories } from '../services/categories';
 import { fetchBrands } from '../services/brands';
 import { Category, SubCategory, Product, Brand } from '../types';
@@ -139,11 +139,11 @@ export const useProductDetail = (slug?: string) => {
 export const usePrefetchData = () => {
     const queryClient = useQueryClient();
 
-    const prefetchProduct = (id: string) => {
-        const sanitizedId = id.replace(/\s+/g, '-');
+    const prefetchProduct = (slug: string) => {
+        const sanitizedSlug = slug.replace(/\s+/g, '-');
         queryClient.prefetchQuery({
-            queryKey: ['product', sanitizedId],
-            queryFn: () => fetchProductById(sanitizedId),
+            queryKey: ['product', sanitizedSlug],
+            queryFn: () => fetchProductBySlug(sanitizedSlug),
             staleTime: 1000 * 60 * 10,
         });
     };

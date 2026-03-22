@@ -201,17 +201,17 @@ import { withCache } from './cache';
    🆔 FETCH SINGLE PRODUCT (Product Detail Page)
    ✨ Helper to get full details + images
 ========================================================== */
-export async function fetchProductById(id: string): Promise<Product | null> {
-  const cacheKey = `product-detail-${id}`;
+export async function fetchProductBySlug(slug: string): Promise<Product | null> {
+  const cacheKey = `product-detail-slug-${slug}`;
 
   return withCache(cacheKey, async () => {
     try {
-      const url = `${API_BASE}/products/${id}`;
+      const url = `${API_BASE}/products/by-slug/${slug}`;
       const res = await fetch(url);
 
       if (!res.ok) {
         const msg = `Failed to fetch product: ${res.status} ${res.statusText} (URL: ${url})`;
-        console.error(`❌ [fetchProductById] ${msg}`);
+        console.error(`❌ [fetchProductBySlug] ${msg}`);
         throw new Error(msg);
       }
 
@@ -219,7 +219,7 @@ export async function fetchProductById(id: string): Promise<Product | null> {
       const productData = json.data || json;
 
       if (!productData || !productData.id) {
-        console.error("❌ [fetchProductById] Invalid data received:", json);
+        console.error("❌ [fetchProductBySlug] Invalid data received:", json);
         throw new Error("Invalid product data structure received");
       }
 
@@ -227,7 +227,7 @@ export async function fetchProductById(id: string): Promise<Product | null> {
       return mapBackendProduct(productData);
 
     } catch (error) {
-      console.error("Error fetching product by ID:", error);
+      console.error("Error fetching product by slug:", error);
       return null;
     }
   }, 2 * 60 * 1000); // 2 minute cache
