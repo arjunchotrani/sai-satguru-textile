@@ -39,6 +39,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'p1',
     name: 'Royal Banarasi Silk Saree',
+    slug: 'royal-banarasi-silk-saree',
     categoryId: 'saree',
     subCategoryId: 's-banarasi',
     basePriceINR: 5499,
@@ -51,6 +52,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'p2',
     name: 'Floral Embroidered Dress',
+    slug: 'floral-embroidered-dress',
     categoryId: 'gown',
     subCategoryId: 'g-casual',
     basePriceINR: 2850,
@@ -62,6 +64,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'p3',
     name: 'Bridal Velvet Lehenga',
+    slug: 'bridal-velvet-lehenga',
     categoryId: 'lehengas',
     subCategoryId: 'l-bridal',
     basePriceINR: 12900,
@@ -74,6 +77,7 @@ export const PRODUCTS: Product[] = [
   {
     id: 'p5',
     name: 'Designer Cotton Kurtie',
+    slug: 'designer-cotton-kurtie',
     categoryId: 'kurtis',
     subCategoryId: 'k-cotton',
     basePriceINR: 1150,
@@ -86,6 +90,7 @@ export const PRODUCTS: Product[] = [
   ...Array.from({ length: 20 }).map((_, i) => ({
     id: `p-gen-${i}`,
     name: `Premium Collection Item ${i + 1}`,
+    slug: `premium-collection-item-${i + 1}`,
     categoryId: CATEGORIES[i % CATEGORIES.length].id,
     subCategoryId: '',
     basePriceINR: 2000 + (i * 100),

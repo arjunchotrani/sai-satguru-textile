@@ -1,10 +1,10 @@
 import { useQuery, useInfiniteQuery, keepPreviousData, useQueryClient } from '@tanstack/react-query';
-import { fetchProducts, fetchProductsPaginated, fetchNewArrivals, fetchProductById } from '../services/products';
+import { fetchProducts, fetchProductsPaginated, fetchNewArrivals, fetchProductById, mapBackendProduct } from '../services/products';
 import { fetchCategories, fetchSubCategories } from '../services/categories';
 import { fetchBrands } from '../services/brands';
 import { Category, SubCategory, Product, Brand } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://sai-satguru-backend.arjunchotrani0.workers.dev';
 
 export const useCategories = () => {
     return useQuery<Category[]>({
@@ -125,7 +125,7 @@ export const useProductDetail = (slug?: string) => {
         throw new Error("Failed to fetch product");
       }
       const json = await res.json();
-      return json.data;
+      return mapBackendProduct(json.data);
     },
     enabled: !!slug,
     staleTime: 1000 * 60 * 5,

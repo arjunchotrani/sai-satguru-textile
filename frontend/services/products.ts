@@ -4,7 +4,7 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 
 /* ================= MAP BACKEND → FRONTEND ================= */
-function mapBackendProduct(
+export function mapBackendProduct(
   p: BackendProduct,
   overrideImages?: string[]
 ): Product {
