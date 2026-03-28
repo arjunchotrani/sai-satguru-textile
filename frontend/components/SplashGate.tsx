@@ -40,7 +40,7 @@ export const SplashGate: React.FC<SplashGateProps> = ({ children }) => {
         const timer = setTimeout(() => {
             setPhase('fading');
             sessionStorage.setItem(SPLASH_STORAGE_KEY, 'true');
-        }, 2000);
+        }, 1200);
 
         return () => clearTimeout(timer);
     }, [phase]);

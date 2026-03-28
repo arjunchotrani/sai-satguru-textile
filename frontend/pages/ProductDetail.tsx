@@ -107,13 +107,14 @@ export const ProductDetail: React.FC = () => {
   // Only prefetch neighboring high-res images AFTER the active image finishes loading
   useEffect(() => {
     if (product?.images && activeImage && imageLoaded) {
-      // 1. Immediately preload ALL thumbnails (very light)
-      product.images.forEach(url => {
+      // 1. Preload first 4 thumbnails only (avoid burst-requesting all gallery images)
+      product.images.slice(0, 4).forEach(url => {
         const thumb = new Image();
         thumb.src = optimizedImageUrl(url, 'thumbnail');
       });
 
-      // 2. Preload the NEXT and PREVIOUS high-res images relative to activeImage
+      // 2. Preload only 'main' (600px) for adjacent images.
+      // 'full' (1200px) is loaded on-demand when the lightbox is opened — not preloaded.
       const idx = product.images.indexOf(activeImage);
       const nextIdx = (idx + 1) % product.images.length;
       const prevIdx = (idx - 1 + product.images.length) % product.images.length;
@@ -123,9 +124,8 @@ export const ProductDetail: React.FC = () => {
         if (i !== idx) {
           const imgMain = new Image();
           imgMain.src = optimizedImageUrl(product.images[i], 'main');
-
-          const imgFull = new Image();
-          imgFull.src = optimizedImageUrl(product.images[i], 'full');
+          // Note: 'full' variant is intentionally NOT preloaded here.
+          // It will load naturally when the user opens the lightbox.
         }
       });
     }

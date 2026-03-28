@@ -248,9 +248,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     });
   } else {
     // We want to serve a 200, so copy response in case it had an internal cache status
+    // Also set CDN caching headers so Cloudflare can cache the rewritten HTML at edge
+    const newHeaders = new Headers(response.headers);
+    newHeaders.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
     response = new Response(response.body, {
       status: 200,
-      headers: response.headers
+      headers: newHeaders
     });
   }
 

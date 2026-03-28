@@ -1,0 +1,37 @@
+[
+  {
+    "url": "http://localhost:8788/",
+    "status": 200,
+    "title": "Wholesale Textile Supplier in Surat | Sai Satguru Textile",
+    "desc": "Discover Sai Satguru Textile, Surat's premier wholesale textile supplier. Explore our premium collection of branded ethnic wear, suits, sarees, and boutique fabrics.",
+    "robots": "NOT FOUND"
+  },
+  {
+    "url": "http://localhost:8788/product/royal-georgette-set-mobk",
+    "status": 200,
+    "title": "Royal Georgette Set | Wholesale Suits | Sai Satguru Textile",
+    "desc": "Royal Georgette Set by GULKARYA DESIGNER - Product Name: Royal Georgette Set  PRODUCT DESCRIPTION Gulkayra Designer presents new catalog ROYAL ... Wholesale prices available. Contact Sai Satguru Textile Surat.",
+    "robots": "NOT FOUND"
+  },
+  {
+    "url": "http://localhost:8788/product/invalid-slug-1234",
+    "status": 404,
+    "title": "Not Found | Sai Satguru Textile",
+    "desc": "Premium Wholesale Textile Supplier in Surat.",
+    "robots": "noindex, nofollow"
+  },
+  {
+    "url": "http://localhost:8788/brands",
+    "status": 200,
+    "title": "Our Brands | Premium Textile Brands | Sai Satguru Textile",
+    "desc": "Explore our directory of premium textile and ethnic wear brands. Partner with Sai Satguru Textile for wholesale branded collections.",
+    "robots": "NOT FOUND"
+  },
+  {
+    "url": "http://localhost:8788/brand/alizeh-offical",
+    "status": 200,
+    "title": "ALIZEH OFFICAL | Brand Collection | Sai Satguru Textile",
+    "desc": "Explore the ALIZEH OFFICAL collection at Sai Satguru Textile. Premium branded ethnic wear, designer suits, and boutique-ready styles.",
+    "robots": "NOT FOUND"
+  }
+]

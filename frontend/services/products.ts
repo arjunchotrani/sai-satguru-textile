@@ -41,7 +41,7 @@ export async function fetchNewArrivals(page = 1, limit = 12, skipImages = false)
   const res = await fetch(`${API_BASE}/products?page=${page}&limit=${limit}`);
 
   if (!res.ok) throw new Error("Failed to fetch new arrivals");
-  const json = await res.json();
+  const json = await res.json() as any;
   const data = Array.isArray(json) ? json : json.data || [];
 
   const validProducts = data.filter((p: BackendProduct) => {
@@ -70,7 +70,7 @@ export async function fetchProductImages(productId: string): Promise<string[]> {
   );
 
   if (imgRes.ok) {
-    const imgJson = await imgRes.json();
+    const imgJson = await imgRes.json() as any;
     if (imgJson.success && Array.isArray(imgJson.data)) {
       return imgJson.data.map((img: any) => img.image_url);
     }
@@ -125,7 +125,7 @@ export async function fetchProducts(filters: {
     throw new Error("Failed to fetch products");
   }
 
-  const json = await res.json();
+  const json = await res.json() as any;
   const rawData = json.data as BackendProduct[];
 
   // Filter inactive products
@@ -170,7 +170,7 @@ export async function fetchProductsPaginated(filters: {
     throw new Error("Failed to fetch products");
   }
 
-  const json = await res.json();
+  const json = await res.json() as any;
   const rawData = json.data as BackendProduct[];
 
   // Filter inactive products
@@ -215,7 +215,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
         throw new Error(msg);
       }
 
-      const json = await res.json();
+      const json = await res.json() as any;
       const productData = json.data || json;
 
       if (!productData || !productData.id) {
