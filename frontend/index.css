@@ -3,10 +3,16 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+  }
+
   body {
     @apply bg-[#050505] text-[#e5e5e5] overflow-x-hidden;
   }
 }
+
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
