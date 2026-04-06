@@ -52,7 +52,7 @@ export const ProductCard: React.FC<Props> = ({ product, priority = false }) => {
       prefetchType="product"
       prefetchId={product.slug}
       targetComponent={() => import("../pages/ProductDetail")}
-      className="group relative bg-[#0a0a0a] ring-1 ring-inset ring-white/5 overflow-hidden block hover:ring-brand-gold/50 transition-[box-shadow] duration-200 cursor-pointer"
+      className="group relative bg-[#0a0a0a] overflow-hidden block cursor-pointer product-card-hover"
     >
       <OptimizedImage
         src={imageUrl}

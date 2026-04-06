@@ -13,6 +13,23 @@
   }
 }
 
+@layer components {
+  /* Product card hover ring — only transitions ON hover-in, snaps back instantly on hover-out.
+     This prevents stacked GPU transitions (cards 1, 2, 3 all animating at once) when the
+     cursor moves quickly across a row, which caused the 3rd card to feel janky. */
+  .product-card-hover {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: none;
+    transform: translateZ(0); /* Force GPU compositing layer for this card */
+    will-change: box-shadow;
+  }
+
+  .product-card-hover:hover {
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.5);
+    transition: box-shadow 150ms ease;
+  }
+}
+
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
