@@ -59,7 +59,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps & { priority?: boolean
         >
             {/* Skeleton / Placeholder */}
             {!isLoaded && !error && (
-                <div className="absolute inset-0 animate-pulse bg-white/5" />
+                <div className="absolute inset-0 animate-pulse bg-white/5 pointer-events-none" />
             )}
 
             {/* Actual Image */}
@@ -75,7 +75,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps & { priority?: boolean
 
             {/* Error State */}
             {error && (
-                <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-white/20 text-[10px] uppercase tracking-tighter">
+                <div className="absolute inset-0 flex items-center justify-center bg-neutral-800 text-white/20 text-[10px] uppercase tracking-tighter pointer-events-none">
                     No Image
                 </div>
             )}

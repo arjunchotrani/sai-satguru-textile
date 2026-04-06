@@ -52,7 +52,7 @@ export const ProductCard: React.FC<Props> = ({ product, priority = false }) => {
       prefetchType="product"
       prefetchId={product.slug}
       targetComponent={() => import("../pages/ProductDetail")}
-      className="group relative bg-[#0a0a0a] border border-white/5 overflow-hidden block hover:border-brand-gold/50 transition-colors"
+      className="group relative bg-[#0a0a0a] border border-white/5 overflow-hidden block hover:border-brand-gold/50 transition-colors cursor-pointer"
     >
       <OptimizedImage
         src={imageUrl}
@@ -60,7 +60,7 @@ export const ProductCard: React.FC<Props> = ({ product, priority = false }) => {
         priority={priority}
       />
 
-      <div className="p-4 bg-gradient-to-t from-black via-black/80 to-transparent">
+      <div className="p-4 bg-gradient-to-t from-black via-black/80 to-transparent pointer-events-none">
         <h3 className="text-[11px] uppercase tracking-[0.2em] font-medium text-white/90 line-clamp-1 mb-1">
           {product.name}
         </h3>
