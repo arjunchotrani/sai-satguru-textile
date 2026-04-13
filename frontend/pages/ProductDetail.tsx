@@ -786,20 +786,26 @@ Please share price, MOQ and availability.`;
                   )}
 
                   {/* Category Card */}
-                  {category?.slug ? (
-                    <Link
-                      to={`/category/${normalizeSlug(category.slug)}`}
-                      className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer"
-                    >
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3 group-hover:text-brand-gold transition-colors">Category</span>
-                      <span className="text-sm font-bold text-white uppercase tracking-widest">{category.label || category.name}</span>
-                    </Link>
-                  ) : (
-                    <div className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center shadow-xl">
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3">Category</span>
-                      <span className="text-sm font-bold text-white uppercase tracking-widest">{category?.label || category?.name || parsedDetails.type || 'General'}</span>
-                    </div>
-                  )}
+                  {(() => {
+                    const fallbackCatLabel = parsedDetails?.type;
+                    const displayCatName = category?.label || category?.name || fallbackCatLabel || 'General';
+                    const displayCatSlug = category?.slug || (displayCatName !== 'General' ? normalizeSlug(displayCatName) : null);
+
+                    return displayCatSlug ? (
+                      <Link
+                        to={`/category/${displayCatSlug}`}
+                        className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer"
+                      >
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3 group-hover:text-brand-gold transition-colors">Category</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-widest">{displayCatName}</span>
+                      </Link>
+                    ) : (
+                      <div className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center shadow-xl">
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3">Category</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-widest">{displayCatName}</span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
 
