@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { fetchBrands } from '../services/brands';
 import { Brand } from '../types';
 import { SEO } from '../components/SEO';
@@ -49,9 +50,13 @@ export const BrandsPage: React.FC = () => {
     return (
         <div className="bg-black min-h-screen pt-32 pb-24 text-white">
             <SEO
-                title="Our Brands | Sai Satguru Textile"
-                description="Explore our curated collection of premium textile brands."
+                title="Our Textile Brands | Sai Satguru Textile"
+                description="Browse all available textile brands at Sai Satguru Textile. Explore brand-wise collections, catalogue products, and enquiry-based wholesale sourcing from Surat."
             />
+            {/* Canonical URL for /brands page */}
+            <Helmet>
+                <link rel="canonical" href="https://www.saisatgurutextile.com/brands" />
+            </Helmet>
 
             <div className="container mx-auto px-6 md:px-12">
                 {/* Hero Section */}
@@ -133,6 +138,19 @@ export const BrandsPage: React.FC = () => {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                )}
+
+                {/* ── SEO Intro Paragraph (below all brand groups) ── */}
+                {!loading && filteredBrands.length > 0 && (
+                    <div className="mt-20 pt-14 border-t border-white/10 text-center max-w-2xl mx-auto">
+                        <p className="text-white/40 text-sm leading-relaxed">
+                            Sai Satguru Textile provides brand-wise collection pages so wholesale
+                            buyers, boutique owners, and retail stockists can browse products from
+                            a specific brand in one place. Each brand page supports catalogue-style
+                            discovery and direct WhatsApp enquiry for pricing, availability, and
+                            sourcing support — all from Surat, Gujarat.
+                        </p>
                     </div>
                 )}
             </div>

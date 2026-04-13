@@ -1,5 +1,6 @@
 
 import { Brand } from "../types";
+import { normalizeSlug } from "../utils/slug";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
@@ -10,13 +11,13 @@ export async function fetchBrands(): Promise<Brand[]> {
     try {
         const res = await fetch(`${API_BASE}/brands`);
         if (!res.ok) throw new Error("Failed to fetch brands");
-        const json = await res.json();
+        const json: any = await res.json();
         const rawBrands = json.data || [];
 
-        // Ensure every brand has a slug (fallback to name-based generation)
+        // Ensure every brand has a normalized slug (fallback to name-based generation)
         return rawBrands.map((b: any) => ({
             ...b,
-            slug: b.slug || b.name.toLowerCase().replace(/\s+/g, '-')
+            slug: b.slug ? normalizeSlug(b.slug) : normalizeSlug(b.name)
         }));
     } catch (error) {
         console.error("Error fetching brands:", error);
@@ -38,13 +39,13 @@ export async function fetchBrandBySlug(slug: string): Promise<Brand | null> {
         const res = await fetch(`${API_BASE}/brands/${slug}`);
 
         if (res.ok) {
-            const json = await res.json();
+            const json: any = await res.json();
             return json.data || json;
         }
 
-        // Fallback: fetch all and find
+        // Fallback: fetch all and find by normalized slug
         const allBrands = await fetchBrands();
-        return allBrands.find(b => b.slug === slug) || null;
+        return allBrands.find(b => normalizeSlug(b.slug || b.name) === normalizeSlug(slug)) || null;
 
     } catch (error) {
         console.error(`Error fetching brand ${slug}:`, error);

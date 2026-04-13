@@ -7,8 +7,11 @@ import { fetchProducts, fetchProductImages } from '../services/products';
 import { Brand, Product, Category } from '../types';
 import { fetchCategories } from '../services/categories';
 import { SEO } from '../components/SEO';
+import { Helmet } from 'react-helmet-async';
 import { ProductCard } from '../components/ProductCard';
 import { Filter, X, ChevronDown, Search } from 'lucide-react';
+import { BrandSeoContent, BrandJsonLd } from '../components/BrandSeoContent';
+import { normalizeSlug } from '../utils/slug';
 
 export const BrandLandingPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -149,12 +152,26 @@ export const BrandLandingPage: React.FC = () => {
         );
     }
 
+    // Build canonical slug + URL once (used for SEO + JSON-LD)
+    const canonicalSlug = normalizeSlug(brand.slug || brand.name);
+    const canonicalUrl = `https://www.saisatgurutextile.com/brand/${canonicalSlug}`;
+    const seoTitle = `${brand.name} Collection at Sai Satguru Textile | Wholesale Supplier in Surat`;
+    const seoDesc = `Explore the latest ${brand.name} collection at Sai Satguru Textile. Discover curated wholesale textile products, catalogue styles, and enquiry-based sourcing support from Surat.`;
+
     return (
         <div className="bg-black min-h-screen pt-24 md:pt-36 pb-12 text-white">
             <SEO
-                title={`${brand.name} | Sai Satguru Textile`}
-                description={`Shop latest collection from ${brand.name}. Wholesale prices on high quality textiles.`}
+                description={seoDesc}
+                url={canonicalUrl}
             />
+            {/*
+              Title override: SEO helper appends '| Sai Satguru Textile' to any custom title.
+              The brand title already contains the full optimised string, so we set it directly
+              via a sibling Helmet (react-helmet-async uses last-writer-wins for <title>).
+            */}
+            <Helmet><title>{seoTitle}</title></Helmet>
+            {/* JSON-LD: CollectionPage + BreadcrumbList + ItemList + FAQPage */}
+            <BrandJsonLd brand={brand} products={products} categories={categories} />
 
             <div className="container mx-auto px-4 md:px-8">
                 {/* Breadcrumb */}
@@ -396,6 +413,15 @@ export const BrandLandingPage: React.FC = () => {
                             <X size={18} /> Clear all filters
                         </button>
                     </div>
+                )}
+
+                {/* ── SEO Content Block (below grid + pagination, above footer) ── */}
+                {!loading && brand && (
+                    <BrandSeoContent
+                        brand={brand}
+                        products={products}
+                        categories={categories}
+                    />
                 )}
             </div>
         </div>

@@ -171,14 +171,26 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     // 4. BRANDS DIRECTORY
     else if (path === "/brands") {
       isTargetRoute = true;
-      title = "Our Brands | Premium Textile Brands | Sai Satguru Textile";
-      description = "Explore our directory of premium textile and ethnic wear brands. Partner with Sai Satguru Textile for wholesale branded collections.";
+      title = "Our Textile Brands | Sai Satguru Textile";
+      description = "Browse all available textile brands at Sai Satguru Textile. Explore brand-wise collections, catalogue products, and enquiry-based wholesale sourcing from Surat.";
+      canonical = `${SITE_URL}/brands`;
       schemaJson = JSON.stringify({
-        "@context": "https://schema.org/",
-        "@type": "CollectionPage",
-        "name": "Our Brands",
-        "description": description,
-        "url": canonical
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "CollectionPage",
+            "name": "Our Textile Brands | Sai Satguru Textile",
+            "description": description,
+            "url": canonical
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+              { "@type": "ListItem", "position": 2, "name": "Brands", "item": canonical }
+            ]
+          }
+        ]
       });
     }
     // 5. BRAND SINGLE PAGE
@@ -190,21 +202,41 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         if (res.ok) {
           const json: any = await res.json();
           const brands = json.data || [];
-          
+
+          // normalizeSlug logic — must stay identical to frontend/utils/slug.ts
+          const normalizeSlug = (name: string) =>
+            name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
           const brand = brands.find((b: any) => {
-             const bSlug = b.slug || b.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-             return bSlug === slug;
+            const bSlug = b.slug
+              ? normalizeSlug(b.slug)
+              : normalizeSlug(b.name);
+            return bSlug === slug;
           });
-          
+
           if (brand) {
-            title = `${brand.name} | Brand Collection | Sai Satguru Textile`;
-            description = `Explore the ${brand.name} collection at Sai Satguru Textile. Premium branded ethnic wear, designer suits, and boutique-ready styles.`;
+            const canonicalSlug = normalizeSlug(brand.slug || brand.name);
+            canonical = `${SITE_URL}/brand/${canonicalSlug}`;
+            title = `${brand.name} Collection at Sai Satguru Textile | Wholesale Supplier in Surat`;
+            description = `Explore the latest ${brand.name} collection at Sai Satguru Textile. Discover curated wholesale textile products, catalogue styles, and enquiry-based sourcing support from Surat.`;
             schemaJson = JSON.stringify({
-                "@context": "https://schema.org/",
-                "@type": "CollectionPage",
-                "name": brand.name,
-                "description": description,
-                "url": canonical
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "CollectionPage",
+                  "name": title,
+                  "description": description,
+                  "url": canonical
+                },
+                {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+                    { "@type": "ListItem", "position": 2, "name": "Brands", "item": `${SITE_URL}/brands` },
+                    { "@type": "ListItem", "position": 3, "name": brand.name, "item": canonical }
+                  ]
+                }
+              ]
             });
           } else {
             notFound = true;
