@@ -18,6 +18,11 @@ export function isGenericProduct(brandName?: string | null): boolean {
   return GENERIC_BRAND_VALUES.has(brandName as any) || brandName.trim() === '';
 }
 
+export function toDisplayCase(str: string): string {
+  if (!str) return '';
+  return str.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+}
+
 // ─── SEO Helpers ────────────────────────────────────────────────────────────
 
 export function buildProductSeoTitle(
@@ -259,7 +264,8 @@ export const ProductSeoContent: React.FC<ProductSeoContentProps> = ({
   relatedProducts,
 }) => {
   const isBranded = !isGenericProduct(product.brandName);
-  const catLabel = category?.label || category?.name || '';
+  const rawCatLabel = category?.label || category?.name || '';
+  const catLabel = toDisplayCase(rawCatLabel);
   const catSlug = category?.slug || '';
   const brandSlug = product.brandSlug
     ? normalizeSlug(product.brandSlug)

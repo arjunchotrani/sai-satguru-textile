@@ -16,6 +16,7 @@ import {
   buildProductSeoTitle,
   buildProductSeoDesc,
 } from '../components/ProductSeoContent';
+import { normalizeSlug } from '../utils/slug';
 
 const GLOBAL_NOTES = [
   "GST and shipping charges are extra on the listed prices.",
@@ -768,15 +769,37 @@ Please share price, MOQ and availability.`;
 
                 {/* 2. Metadata Grid: Brand | Category */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[
-                    { label: 'Brand', value: parsedDetails.brand || product.brandName || 'Generic' },
-                    { label: 'Category', value: category?.label || category?.name || parsedDetails.type || 'General' }
-                  ].map((item, i) => (
-                    <div key={i} className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:bg-white/[0.08] transition-all duration-500 shadow-xl">
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3 group-hover:text-brand-gold transition-colors">{item.label}</span>
-                      <span className="text-sm font-bold text-white uppercase tracking-widest">{item.value}</span>
+                  {/* Brand Card */}
+                  {isBranded && (product.brandSlug || product.brandName) ? (
+                    <Link
+                      to={`/brand/${normalizeSlug(product.brandSlug || product.brandName)}`}
+                      className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer"
+                    >
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3 group-hover:text-brand-gold transition-colors">Brand</span>
+                      <span className="text-sm font-bold text-white uppercase tracking-widest">{parsedDetails.brand || product.brandName}</span>
+                    </Link>
+                  ) : (
+                    <div className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center shadow-xl">
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3">Brand</span>
+                      <span className="text-sm font-bold text-white uppercase tracking-widest">{parsedDetails.brand || product.brandName || 'Generic'}</span>
                     </div>
-                  ))}
+                  )}
+
+                  {/* Category Card */}
+                  {category?.slug ? (
+                    <Link
+                      to={`/category/${normalizeSlug(category.slug)}`}
+                      className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center group hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 shadow-xl cursor-pointer"
+                    >
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3 group-hover:text-brand-gold transition-colors">Category</span>
+                      <span className="text-sm font-bold text-white uppercase tracking-widest">{category.label || category.name}</span>
+                    </Link>
+                  ) : (
+                    <div className="bg-white/[0.04] border border-white/5 p-8 rounded-2xl flex flex-col items-center text-center shadow-xl">
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mb-3">Category</span>
+                      <span className="text-sm font-bold text-white uppercase tracking-widest">{category?.label || category?.name || parsedDetails.type || 'General'}</span>
+                    </div>
+                  )}
                 </div>
 
 
