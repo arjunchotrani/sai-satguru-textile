@@ -169,7 +169,11 @@ export const BrandLandingPage: React.FC = () => {
               The brand title already contains the full optimised string, so we set it directly
               via a sibling Helmet (react-helmet-async uses last-writer-wins for <title>).
             */}
-            <Helmet><title>{seoTitle}</title></Helmet>
+            <Helmet>
+                <title>{seoTitle}</title>
+                <meta property="og:title" content={seoTitle} />
+                <meta property="twitter:title" content={seoTitle} />
+            </Helmet>
             {/* JSON-LD: CollectionPage + BreadcrumbList + ItemList + FAQPage */}
             <BrandJsonLd brand={brand} products={products} categories={categories} />
 

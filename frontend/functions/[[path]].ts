@@ -51,11 +51,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
             notFound = true;
           } else {
             const product = json.data;
-            const brandText = product.brandName && product.brandName !== "Generic" ? product.brandName : "Premium Collection";
-            title = `${product.name} | Wholesale Suits | Sai Satguru Textile`;
-            
-            let cleanDesc = product.description ? product.description.replace(/\n/g, " ").replace(/[*_~]/g, "").trim() : "";
-            description = `${product.name} by ${brandText} - ${cleanDesc.substring(0, 100)}... Wholesale prices available. Contact Sai Satguru Textile Surat.`;
+            const isGeneric = !product.brandName || product.brandName.toLowerCase() === 'generic' || product.brandName.trim() === '';
+            const brandText = isGeneric ? null : product.brandName;
+
+            if (isGeneric) {
+              title = `${product.name} | Wholesale at Sai Satguru Textile`;
+              description = `Explore ${product.name} catalogue product available for wholesale enquiry at Sai Satguru Textile, Surat. Contact us on WhatsApp for pricing.`;
+            } else {
+              title = `${product.name} | ${brandText} at Sai Satguru Textile`;
+              const cleanDesc = product.description ? product.description.replace(/\n/g, " ").replace(/[*_~]/g, "").trim().substring(0, 70) : "";
+              const descPart = cleanDesc ? ` ${cleanDesc}.` : "";
+              description = `Explore ${product.name} by ${brandText} at Sai Satguru Textile.${descPart} Wholesale sourcing from Surat — enquire via WhatsApp.`;
+            }
 
             const image = (product.images && product.images.length > 0) ? product.images[0] : `${SITE_URL}/logo-512.png`;
 
@@ -72,28 +79,14 @@ export const onRequest: PagesFunction<Env> = async (context) => {
               <meta name="twitter:image" content="${image}">
             `;
 
+            // Lightweight BreadcrumbList on edge; React Helmet injects full Product + FAQ schema
             schemaJson = JSON.stringify({
               "@context": "https://schema.org/",
-              "@type": "Product",
-              "name": product.name,
-              "image": product.images || [],
-              "description": description,
-              "brand": {
-                "@type": "Brand",
-                "name": product.brandName || "Sai Satguru Textile"
-              },
-              "url": canonical,
-              "offers": {
-                "@type": "Offer",
-                "url": canonical,
-                "priceCurrency": "INR",
-                "price": product.price || product.basePriceINR || 0,
-                "availability": "https://schema.org/InStock",
-                "seller": {
-                  "@type": "Organization",
-                  "name": "Sai Satguru Textile"
-                }
-              }
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+                { "@type": "ListItem", "position": 2, "name": product.name, "item": canonical }
+              ]
             });
           }
         }

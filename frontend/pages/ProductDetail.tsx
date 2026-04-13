@@ -5,10 +5,17 @@ import { Phone, CheckCircle, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, 
 import { useCurrency } from '../components/CurrencyContext';
 import { SEO } from '../components/SEO';
 import { Helmet } from 'react-helmet-async';
-import { useProductDetail, useCategories, useSubCategories } from '../hooks/useProducts';
+import { useProductDetail, useCategories, useSubCategories, useProducts } from '../hooks/useProducts';
 import { CONTACT_INFO } from '../constants';
 import { optimizedImageUrl } from '../utils/imageOptimizer';
 import type { Product, Category, SubCategory } from '../types';
+import {
+  ProductSeoContent,
+  ProductJsonLd,
+  isGenericProduct,
+  buildProductSeoTitle,
+  buildProductSeoDesc,
+} from '../components/ProductSeoContent';
 
 const GLOBAL_NOTES = [
   "GST and shipping charges are extra on the listed prices.",
@@ -24,6 +31,20 @@ export const ProductDetail: React.FC = () => {
   const { data: product, isLoading: productLoading, error: productError } = useProductDetail(slug);
   const { data: allCategories } = useCategories();
   const { data: subCategories } = useSubCategories(product?.categoryId);
+
+  // Related products — prefer same brand (branded) or same category (generic)
+  const isBranded = !isGenericProduct(product?.brandName);
+  const { data: relatedRaw } = useProducts({
+    ...(isBranded && product?.brandId
+      ? { brand_id: product.brandId }
+      : { category_id: product?.categoryId }),
+    limit: 8,
+  });
+  // Exclude current product, cap at 4
+  const relatedProducts = useMemo(() =>
+    (relatedRaw || []).filter(p => p.id !== product?.id).slice(0, 4),
+    [relatedRaw, product?.id]
+  );
 
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -477,44 +498,36 @@ Please share price, MOQ and availability.`;
 
   return (
     <div className="bg-black w-full pt-[80px] pb-4">
+      {/* ── Improved SEO Metadata ── */}
       <SEO
-        title={`${product.name} | Wholesale Textile Surat`}
-        description={
+        description={buildProductSeoDesc(
+          product.name,
+          product.brandName,
+          category?.label || category?.name,
           product.description
-            ? product.description
-                .replace(/\n/g, " ")
-                .replace(/[*_~]/g, "")
-                .substring(0, 150)
-                .trim() + "..."
-            : `Buy ${product.name} wholesale from Surat. Best prices 
-               for retailers and exporters. WhatsApp to order!`
-        }
-        image={activeImage || product.images[0]}
+        )}
+        image={activeImage || product.images?.[0]}
         url={currentUrl}
         type="product"
       />
+      {/* Title override: SEO helper auto-appends site name; our title already contains the full string */}
       <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": product.name,
-            "image": product.images,
-            "description": product.description,
-            "brand": {
-              "@type": "Brand",
-              "name": "Sai Satguru Textile"
-            },
-            "offers": {
-              "@type": "Offer",
-              "url": currentUrl,
-              "priceCurrency": "INR", // Base price is always INR
-              "price": product.basePriceINR,
-              "availability": "https://schema.org/InStock"
-            }
-          })}
-        </script>
+        <title>
+          {buildProductSeoTitle(product.name, product.brandName, category?.label || category?.name)}
+        </title>
+        <meta property="og:title" content={buildProductSeoTitle(product.name, product.brandName, category?.label || category?.name)} />
+        <meta property="twitter:title" content={buildProductSeoTitle(product.name, product.brandName, category?.label || category?.name)} />
+        {/* Canonical */}
+        <link rel="canonical" href={currentUrl} />
       </Helmet>
+      {/* ── Full Product + BreadcrumbList + FAQPage JSON-LD ── */}
+      <ProductJsonLd
+        product={product}
+        category={category}
+        canonicalUrl={currentUrl}
+        seoTitle={buildProductSeoTitle(product.name, product.brandName, category?.label || category?.name)}
+        seoDesc={buildProductSeoDesc(product.name, product.brandName, category?.label || category?.name, product.description)}
+      />
       <div className="container mx-auto px-4 lg:px-8">
 
         {/* Breadcrumb */}
@@ -958,6 +971,15 @@ Please share price, MOQ and availability.`;
           </div>
         </div>
       </div>
+
+        {/* ── Product SEO Extension (below product details, above lightbox) ── */}
+        <div className="w-full max-w-[900px] mx-auto mt-4 px-2 pb-16">
+          <ProductSeoContent
+            product={product}
+            category={category}
+            relatedProducts={relatedProducts}
+          />
+        </div>
 
       {/* LIGHTBOX: FULL IMMERSIVE VIEW */}
       {isLightboxOpen && createPortal(
