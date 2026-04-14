@@ -30,13 +30,10 @@ export async function fetchBrands(): Promise<Brand[]> {
  */
 export async function fetchBrandBySlug(slug: string): Promise<Brand | null> {
     try {
-        // We might need a specific endpoint for this, or filter from all brands
-        // Assuming backend has /brands/:slug or we filter client side if list is small.
-        // Ideally backend should support /brands?slug=... or /brands/:slug
+        // Always normalize the slug before fetching — guards against DB slugs with spaces
+        const cleanSlug = normalizeSlug(slug);
 
-        // For now, let's try fetching all and filtering if no direct endpoint exists, 
-        // OR try the direct endpoint. Let's assume standard REST pattern.
-        const res = await fetch(`${API_BASE}/brands/${slug}`);
+        const res = await fetch(`${API_BASE}/brands/${cleanSlug}`);
 
         if (res.ok) {
             const json: any = await res.json();
@@ -45,7 +42,7 @@ export async function fetchBrandBySlug(slug: string): Promise<Brand | null> {
 
         // Fallback: fetch all and find by normalized slug
         const allBrands = await fetchBrands();
-        return allBrands.find(b => normalizeSlug(b.slug || b.name) === normalizeSlug(slug)) || null;
+        return allBrands.find(b => normalizeSlug(b.slug || b.name) === cleanSlug) || null;
 
     } catch (error) {
         console.error(`Error fetching brand ${slug}:`, error);

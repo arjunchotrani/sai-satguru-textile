@@ -685,7 +685,7 @@ Please share price, MOQ and availability.`;
               <>
                 <span className="text-white/20 text-[10px]">•</span>
                 <Link
-                  to={`/brand/${product.brandSlug || product.brandName.toLowerCase().replace(/\s+/g, '-')}`}
+                  to={`/brand/${normalizeSlug(product.brandSlug || product.brandName)}`}
                   className="text-white/60 hover:text-brand-gold text-[10px] uppercase tracking-widest font-bold transition-colors"
                 >
                   {product.brandName}
