@@ -13,7 +13,7 @@ brandsRoutes.get("/", async (c) => {
 
     const { data, error } = await supabase
         .from("brands")
-        .select("id, name")
+        .select("id, name, slug")
         .order("name", { ascending: true });
 
     if (error) {
@@ -53,15 +53,22 @@ brandsRoutes.post("/", adminAuth, async (c) => {
 brandsRoutes.put("/:id", adminAuth, async (c) => {
     const supabase = getSupabaseAdmin(c.env);
     const id = c.req.param("id");
-    const { name } = await c.req.json();
+    const { name, slug } = await c.req.json();
 
     if (!name) {
         return c.json({ success: false, message: "Brand name is required" }, 400);
     }
 
+    // Generate slug from name if not provided explicitly
+    const computedSlug = (slug?.trim() || name)
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
     const { data, error } = await supabase
         .from("brands")
-        .update({ name })
+        .update({ name, slug: computedSlug })
         .eq("id", id)
         .select()
         .single();
