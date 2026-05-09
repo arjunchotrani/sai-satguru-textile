@@ -131,8 +131,13 @@ export function parseProductDescription(description?: string): ParsedProductDeta
       return;
     }
 
-    if (upper.includes('CODE-') || upper.includes('PRICE-') || upper.startsWith('CODE:') || upper.startsWith('PRICE:')) {
-      details.overviewItems.push({ type: 'badge', content: line });
+    const isBadge = upper.includes('CODE-') || upper.includes('PRICE-') || 
+                    upper.startsWith('CODE:') || upper.startsWith('PRICE:') || 
+                    upper.replace(/^- /, '').startsWith('SKU:') || 
+                    upper.replace(/^- /, '').startsWith('RATE:');
+
+    if (isBadge) {
+      details.overviewItems.push({ type: 'badge', content: line.replace(/^- /, '') });
     }
     else if (isShortLine && !hasDivider && (upper === 'DETAILS' || upper === 'PRODUCT DESCRIPTION' || upper === 'KEY DETAILS' || upper === 'DESCRIPTION' || (parts.length === 1 && line.length < 25 && line.toUpperCase() === line))) {
       details.overviewItems.push({ type: 'header', content: line });
