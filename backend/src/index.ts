@@ -37,25 +37,14 @@ app.use("*", async (c, next) => {
 ===================================================== */
 app.use(
   "*",
-  (c, next) => {
-    const allowed = (c.env.ALLOWED_ORIGINS || "")
-      .split(",")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .map((x: string) => x.trim())
-      .filter((x: string) => x.length > 0);
-
-    // Default local dev
-    if (allowed.length === 0) {
-      allowed.push("http://localhost:3000", "http://localhost:3001");
-    }
-
-    return cors({
-      origin: allowed,
-      allowHeaders: ["Content-Type", "Authorization", "Upgrade-Insecure-Requests"],
-      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      credentials: true, // Required for cookies
-    })(c, next);
-  }
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://sai-satguru-textile.vercel.app"
+    ],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
 /* =====================================================
