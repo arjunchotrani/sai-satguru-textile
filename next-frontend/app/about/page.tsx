@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import React from 'react';
 import Link from 'next/link';
 import { Gem, Handshake, Truck, ChevronRight } from 'lucide-react';

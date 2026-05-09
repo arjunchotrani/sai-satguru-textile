@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import React from 'react';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { CONTACT_INFO } from '../../lib/constants';

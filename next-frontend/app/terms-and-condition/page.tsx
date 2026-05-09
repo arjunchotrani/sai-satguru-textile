@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import React from 'react';
 import type { Metadata } from 'next';
 import { ShieldCheck, FileText, Globe, Truck, Info, ShoppingBag, Percent } from 'lucide-react';
