@@ -108,7 +108,7 @@ export default async function RootLayout({
     greatVibes.variable,
   ].join(' ');
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const alreadySeen = cookieStore.get('sst_splash_v5')?.value === 'true';
 
   return (
