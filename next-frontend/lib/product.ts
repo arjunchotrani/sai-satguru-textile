@@ -131,10 +131,16 @@ export function parseProductDescription(description?: string): ParsedProductDeta
       return;
     }
 
-    const isBadge = upper.includes('CODE-') || upper.includes('PRICE-') || 
-                    upper.startsWith('CODE:') || upper.startsWith('PRICE:') || 
-                    upper.replace(/^- /, '').startsWith('SKU:') || 
-                    upper.replace(/^- /, '').startsWith('RATE:');
+    const cleanUpper = upper.replace(/^- /, '').trim();
+    const isBadge = cleanUpper.includes('CODE-') || 
+                    cleanUpper.includes('PRICE-') || 
+                    cleanUpper.startsWith('CODE:') || 
+                    cleanUpper.startsWith('PRICE:') || 
+                    cleanUpper.startsWith('SKU:') || 
+                    cleanUpper.startsWith('SKU CODE:') ||
+                    cleanUpper.startsWith('COLOR:') ||
+                    cleanUpper.startsWith('COLOUR:') ||
+                    cleanUpper.startsWith('RATE:');
 
     if (isBadge) {
       details.overviewItems.push({ type: 'badge', content: line.replace(/^- /, '') });
