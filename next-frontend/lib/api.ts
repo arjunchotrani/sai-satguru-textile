@@ -9,15 +9,16 @@ export function normalizeSlug(slug?: string): string {
         const decoded = decodeURIComponent(slug.replace(/\+/g, ' '));
         return decoded
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-') // Synchronized with backend routes
+            .replace(/[^a-z0-9_]+/g, '-') // Allow underscores for legacy support
             .replace(/^-+|-+$/g, '');
     } catch (e) {
         return slug
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-') 
+            .replace(/[^a-z0-9_]+/g, '-') 
             .replace(/^-+|-+$/g, '');
     }
 }
+
 
 
 // Map raw backend API to frontend types to ensure components receive valid types
@@ -203,20 +204,22 @@ const productMemoryCache = new Map<string, { data: Product; timestamp: number }>
 const CLIENT_SWR_TTL = 1000 * 60 * 5; // 5 minutes
 
 export const fetchProductBySlug = cache(async function(slug: string, lean: boolean = false): Promise<Product | null> {
-    const cleanSlug = normalizeSlug(slug);
-    const cacheKey = `${cleanSlug}:${lean ? 'lean' : 'full'}`;
+    // We keep the cache key normalized, but send the RAW slug to the backend
+    // to support legacy lookups (e.g. underscores).
+    const cacheKey = `slug:${normalizeSlug(slug)}`;
 
     // 1. Instant Cache Hit (SWR)
     if (typeof window !== 'undefined') {
         const cached = productMemoryCache.get(cacheKey);
         if (cached && (Date.now() - cached.timestamp < CLIENT_SWR_TTL)) {
-            // Background refresh logic could be added here
             return cached.data;
         }
     }
 
     try {
-        const endpoint = `/products/by-slug/${cleanSlug}${lean ? '?lean=true' : ''}`;
+        // We pass the raw slug to the backend. The backend is now resilient 
+        // and will try raw match, then normalized match.
+        const endpoint = `/products/by-slug/${slug}`;
         const res = await serverFetch<{ success?: boolean; data?: any } | any>(endpoint);
         const raw = res?.data || res;
         
@@ -229,12 +232,12 @@ export const fetchProductBySlug = cache(async function(slug: string, lean: boole
             return mapped;
         }
     } catch (e) {
-        console.warn(`[fetchProductBySlug] Primary lookup failed for ${cleanSlug}. Attempting fallback search...`);
+        console.warn(`[fetchProductBySlug] Primary lookup failed for ${slug}. Attempting fallback search...`);
     }
 
     // FINAL RESILIENCE FALLBACK: Search by name if slug fails
     try {
-        const fuzzyName = cleanSlug.replace(/-/g, ' ');
+        const fuzzyName = slug.replace(/-|_/g, ' ');
         const { products } = await fetchProducts(new URLSearchParams({ 
             search: fuzzyName,
             limit: '1' 
@@ -244,11 +247,12 @@ export const fetchProductBySlug = cache(async function(slug: string, lean: boole
             return products[0];
         }
     } catch (e) {
-        console.error(`[fetchProductBySlug] Total failure for ${cleanSlug}:`, e);
+        console.error(`[fetchProductBySlug] Total failure for ${slug}:`, e);
     }
     
     return null;
 });
+
 
 
 /**

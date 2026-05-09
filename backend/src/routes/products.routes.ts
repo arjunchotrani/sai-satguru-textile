@@ -202,13 +202,16 @@ productsRoutes.get("/", async (c) => {
 /* =======================
    🌍 GET SINGLE PRODUCT BY SLUG (PUBLIC)
 ======================= */
+/* =======================
+   🌍 GET SINGLE PRODUCT BY SLUG (PUBLIC)
+======================= */
 productsRoutes.get("/by-slug/:slug", async (c) => {
   const start = Date.now();
   const slug = c.req.param("slug");
   const isAdmin = c.req.url.includes("/admin/products");
-  const lean = c.req.query("lean") === "true";
 
-  const cacheKey = `product:detail:slug:${slug}:${isAdmin ? "admin" : "public"}:${lean ? "lean" : "full"}`;
+  // detail cache is always full
+  const cacheKey = `product:detail:slug:${slug}:${isAdmin ? "admin" : "public"}:full`;
   const cached = await getCache(c.env, cacheKey);
   if (cached) {
     c.header("X-Cache", "HIT");
@@ -218,63 +221,50 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
   const supabase = c.get("supabase") || getSupabaseAdmin(c.env);
   const queryStart = Date.now();
   
-  // Normalize the input slug to ensure it matches the database's hyphenated indices
-  const normalizedInput = slug.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-
   // Rule 1 & 3: Ensure we have enough data for Above-the-fold and SEO.
-  const selectFields = lean 
-    ? `
-      id, name, slug, category_id, sub_category_id,
-      brand_id, brand_type, price, description,
-      product_images (image_url, is_primary, display_order),
-      brands (name),
-      categories:category_id (name, slug, label),
-      sub_categories:sub_category_id (name, slug, label)
-    `
-    : `
+  // We ALWAYS use full fields for the detail page.
+  const selectFields = `
       id, name, slug, category_id, sub_category_id,
       brand_id, brand_type, brand, price, description,
       product_images (image_url, is_primary, display_order),
       brands (name),
-      categories:category_id (name, slug, label),
-      sub_categories:sub_category_id (name, slug, label)
+      categories:category_id (name, slug),
+      sub_categories:sub_category_id (name, slug)
     `;
 
-  // Attempt 1: Primary lookup using the normalized slug (canonical)
+  // Attempt 1: Primary lookup using the RAW slug (supports legacy underscores)
   let query = supabase
     .from("products")
     .select(selectFields)
-    .eq("slug", normalizedInput)
+    .eq("slug", slug)
     .eq("is_deleted", false);
-
-  if (lean) {
-    query = query.limit(8, { foreignTable: 'product_images' });
-  }
 
   if (!isAdmin) query = query.eq("is_active", true);
 
-  const { data, error } = await query.single();
+  const { data, error } = await query.maybeSingle();
   let finalData = data;
 
   if (error || !finalData) {
-    // FALLBACK: If exact slug fails, try normalizing the slug or searching by name
+    // Attempt 2: Normalized lookup (supports hyphenated versions of names)
     const normalizedIdentifier = slug.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
     
-    // 1. Try search by normalized slug (if current slug column has hyphens but identifier had spaces)
-    let fbQuery1 = supabase
-      .from("products")
-      .select(selectFields)
-      .eq("slug", normalizedIdentifier)
-      .eq("is_deleted", false);
-    
-    if (lean) fbQuery1 = fbQuery1.limit(8, { foreignTable: 'product_images' });
-    
-    const { data: fallbackData } = await fbQuery1.maybeSingle();
+    if (normalizedIdentifier !== slug) {
+      let fbQuery1 = supabase
+        .from("products")
+        .select(selectFields)
+        .eq("slug", normalizedIdentifier)
+        .eq("is_deleted", false);
       
-    if (fallbackData) {
-        finalData = fallbackData;
-    } else {
-        // 2. Try loose match by name (if naming is close)
+      if (!isAdmin) fbQuery1 = fbQuery1.eq("is_active", true);
+      
+      const { data: fallbackData } = await fbQuery1.maybeSingle();
+      if (fallbackData) {
+          finalData = fallbackData;
+      }
+    }
+    
+    // Attempt 3: Loose match by name (if naming is close)
+    if (!finalData) {
         const nameGuess = slug.replace(/-/g, " ");
         let fbQuery2 = supabase
             .from("products")
@@ -282,11 +272,9 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
             .ilike("name", `%${nameGuess}%`)
             .eq("is_deleted", false);
             
-        if (lean) fbQuery2 = fbQuery2.limit(8, { foreignTable: 'product_images' });
+        if (!isAdmin) fbQuery2 = fbQuery2.eq("is_active", true);
             
         const { data: nameMatch } = await fbQuery2.maybeSingle();
-
-            
         if (nameMatch) {
             finalData = nameMatch;
         } else {
@@ -298,11 +286,9 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
   const queryDuration = Date.now() - queryStart;
   const serializationStart = Date.now();
 
-  const isBranded = (finalData as any).brand_type === "Branded";
   const brandNameField = (finalData as any).brands?.name || (finalData as any).brand || null;
 
-  // Rule 2 & Decision 1: Limit images in lean mode. 
-  // nested limit(8) handled in SQL query, so we just sort here.
+  // Sort images: primary first, then display_order
   let sortedImages = (
     (finalData as any).product_images || []
   ).sort((a: any, b: any) => {
@@ -326,12 +312,12 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
     category: (finalData as any).categories ? { 
         name: (finalData as any).categories.name, 
         slug: (finalData as any).categories.slug,
-        label: (finalData as any).categories.name 
+        label: (finalData as any).categories.label || (finalData as any).categories.name 
     } : null,
     subCategory: (finalData as any).sub_categories ? { 
         name: (finalData as any).sub_categories.name, 
         slug: (finalData as any).sub_categories.slug,
-        label: (finalData as any).sub_categories.name 
+        label: (finalData as any).sub_categories.label || (finalData as any).sub_categories.name 
     } : null,
     product_images: undefined,
     brands: undefined,
@@ -342,12 +328,13 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
   const response = { success: true, data: formatted };
   const serializationDuration = Date.now() - serializationStart;
 
-  console.log(`[Performance Audit] /by-slug/${slug} | Lean: ${lean} | T-Total: ${Date.now() - start}ms | T-Query: ${queryDuration}ms | T-Serial: ${serializationDuration}ms`);
+  console.log(`[Performance Audit] /by-slug/${slug} | T-Total: ${Date.now() - start}ms | T-Query: ${queryDuration}ms | T-Serial: ${serializationDuration}ms`);
 
   await setCache(c.env, cacheKey, response, CACHE_TTL.MEDIUM);
   c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   return c.json(response);
 });
+
 
 
 
