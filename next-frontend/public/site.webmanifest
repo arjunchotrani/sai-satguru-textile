@@ -1,0 +1,16 @@
+{
+  "name": "Sai Satguru Textile",
+  "short_name": "Sai Satguru",
+  "description": "Premium wholesale textile manufacturer in Surat",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "icons": [
+    {
+      "src": "/icon",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

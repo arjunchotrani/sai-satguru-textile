@@ -1,0 +1,361 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-gold: #d4af37;
+  --color-brand-black: #050505;
+
+  /* Font families — mapped directly to Next.js injected variables */
+  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-cinzel);
+  --font-script: var(--font-great-vibes);
+
+  --animate-fade-in-up: fadeIn-up 0.6s ease-out forwards;
+  --animate-fadeIn: fadeIn 0.5s ease-out forwards;
+  --animate-slide-up: slideUp 0.6s ease-out forwards;
+  --animate-draw: draw 1s ease-out forwards;
+}
+
+@keyframes fadeIn-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes draw-40 {
+  from { stroke-dashoffset: 40; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes draw-100 {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes draw-200 {
+  from { stroke-dashoffset: 200; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+@keyframes elegante-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.98);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Splash Screen animations */
+@keyframes loading {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+@keyframes splash-float {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+  50% { transform: translateY(-20px) scale(1.5); opacity: 1; }
+}
+
+@layer base {
+  html {
+    scrollbar-gutter: stable;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: var(--font-sans, "Manrope", sans-serif);
+    background-color: var(--color-brand-black);
+    color: #e5e5e5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Product card hover ring — only transitions ON hover-in, snaps back instantly on hover-out.
+     This prevents stacked GPU transitions (cards 1, 2, 3 all animating at once) when the
+     cursor moves quickly across a row, which caused the 3rd card to feel janky. */
+  .product-card-hover {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: none;
+    transform: translateZ(0); /* Force GPU compositing layer for this card */
+    will-change: box-shadow;
+  }
+
+  .product-card-hover:hover {
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.5);
+    transition: box-shadow 150ms ease;
+  }
+}
+
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Scroll Reveal Classes */
+  .reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: blur(10px);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  /* Text Stagger Delay */
+  .delay-100 {
+    transition-delay: 100ms;
+  }
+
+  .delay-200 {
+    transition-delay: 200ms;
+  }
+
+  .delay-300 {
+    transition-delay: 300ms;
+  }
+
+  .delay-500 {
+    transition-delay: 500ms;
+  }
+
+  /* Glass Utilities */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Animations */
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes draw {
+    from {
+      stroke-dashoffset: 400;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+
+  /* --- Premium Hero CSS Upgrades --- */
+
+  /* Text Gradient Utilities */
+  .text-gradient-gold {
+    background: linear-gradient(to right, #ffffff, #d4af37, #ffffff);
+    background-size: 200% auto;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shine 8s linear infinite;
+  }
+
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  /* Luxury Marquee Background */
+  .marquee-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(-5deg);
+    width: 150vw;
+    left: -25vw;
+    overflow: hidden;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.03;
+    /* Extremely subtle */
+    user-select: none;
+  }
+
+  .marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee-scroll 60s linear infinite;
+    font-size: 8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    /* Optional: hollow text effect */
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.8);
+    color: transparent;
+  }
+
+  @media (min-width: 768px) {
+    .marquee-content {
+      font-size: 14rem;
+    }
+  }
+
+  @keyframes marquee-scroll {
+    0% {
+      transform: translate(0, 0);
+    }
+
+    100% {
+      transform: translate(-100%, 0);
+    }
+  }
+
+  /* Elegant Text Reveal */
+  .reveal-text {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: elegante-slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .reveal-text-1 {
+    animation-delay: 0.1s;
+  }
+
+  .reveal-text-2 {
+    animation-delay: 0.3s;
+  }
+
+  .reveal-text-3 {
+    animation-delay: 0.5s;
+  }
+
+  .reveal-text-4 {
+    animation-delay: 0.7s;
+  }
+
+  @keyframes elegante-slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(30px) scale(0.98);
+      filter: blur(4px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  /* Glass Buttons */
+  .glass-btn {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.7s ease;
+  }
+
+  .glass-btn:hover::before {
+    left: 150%;
+  }
+
+  .glass-btn-gold {
+    border-color: rgba(212, 175, 55, 0.3);
+  }
+
+  .glass-btn-gold:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.6);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+  }
+}
