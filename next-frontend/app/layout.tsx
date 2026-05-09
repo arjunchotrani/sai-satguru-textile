@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Cinzel, Manrope, Great_Vibes } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { WhatsAppWidget } from '../components/WhatsAppWidget';
@@ -107,6 +108,9 @@ export default async function RootLayout({
     greatVibes.variable,
   ].join(' ');
 
+  const cookieStore = cookies();
+  const alreadySeen = cookieStore.get('sst_splash_v5')?.value === 'true';
+
   return (
     <html lang="en" className={`no-scrollbar ${fontClasses}`} suppressHydrationWarning>
       <head>
@@ -117,7 +121,7 @@ export default async function RootLayout({
       </head>
       <body>
         <CurrencyProvider>
-          <SplashGate alreadySeen={false}>
+          <SplashGate alreadySeen={alreadySeen}>
             <Navbar categories={categories} groupedSubCategories={groupedSubCategories} />
             <WhatsAppWidget />
             <main>
