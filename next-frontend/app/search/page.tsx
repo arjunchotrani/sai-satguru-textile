@@ -1,4 +1,3 @@
-export const runtime = 'edge';
 import React, { Suspense } from 'react';
 import SearchArea from '@/components/SearchArea';
 import type { Metadata } from 'next';

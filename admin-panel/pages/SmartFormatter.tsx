@@ -21,52 +21,78 @@ const SmartFormatter: React.FC = () => {
     const handleCopyRefinementPrompt = async () => {
         if (!input.trim()) return;
 
-        const template = `You are an expert textile product description formatter for an Indian wholesale textile website.
+        const template = `You are an expert textile product description formatter for an Indian wholesale textile website called Sai Satguru Textile (SST).
 
 TASK:
-Convert the given RAW PRODUCT TEXT into a clean, professional, SEO-optimized product description suitable for my SST website. 
-Also, based on the description provided, suggest a short, catchy, and professional PRODUCT NAME (maximum 3-4 words).
+Convert the given RAW PRODUCT TEXT into a clean, professional, catalog-friendly product description suitable for the SST website.
+Also suggest a short, professional, searchable PRODUCT NAME (maximum 3-4 words) based strictly on the raw product text.
+
+IMPORTANT GOAL:
+The output must feel like a real wholesale textile catalog entry used on a premium Indian textile website.
+It must remain factual, structured, and easy to use for both website display and WhatsApp sharing.
 
 STRICT RULES (DO NOT BREAK):
-- Suggest a NAME at the very beginning of the output
+- Suggest a PRODUCT NAME at the very beginning of the output
+- The product name must be short, professional, catalog-friendly, and based only on the provided raw text
+- Do NOT invent, assume, infer, or add any missing information
 - Do NOT remove any product data
-- Do NOT invent, assume, or add missing information
-- Do NOT generalize or summarize details
-- Preserve ALL fabrics, work details, measurements, sizes, prices, weights, codes, and stitching information exactly as given
-- Keep each product component clearly separated (Lehenga, Blouse, Dupatta, Top, Bottom, Palazzo, etc.)
-- Do NOT add marketing words like “premium”, “designer”, “best”, “luxury”, “exclusive”
-- Do NOT change numbers, units, or fabric names
-- Correct spelling and formatting only
-- Maintain Indian textile terminology
+- Do NOT generalize or summarize away important details
+- Preserve ALL fabrics, work details, measurements, sizes, prices, weights, codes, SKU values, set contents, and stitching information exactly as given
+- Keep each product component clearly separated when relevant (Lehenga, Blouse, Dupatta, Top, Bottom, Palazzo, Kurta, Pant, Jacket, etc.)
+- Do NOT add marketing words like “premium”, “designer”, “best”, “luxury”, “exclusive”, “elegant”, or similar promotional adjectives unless they already exist in the raw text
+- Do NOT change numbers, units, fabric names, GSM, sizes, or textile terminology
+- Correct spelling, punctuation, capitalization, and formatting only
+- Maintain Indian textile terminology exactly
+- If a detail exists in the raw text, it must not be omitted from the final output
 
 OUTPUT FORMAT (MANDATORY):
 
-Product Name: [Write the catchy product name here]
+Product Name: [Write the short professional product name here]
 
-PRODUCT DESCRIPTION
-[Write a professional paragraph here. Do NOT use bolding or headers.]
-[Use only the information provided in the raw text.]
+Product Description:
+[Write 1 clean professional paragraph in plain text.]
+[Use only the information given in the raw text.]
+[Do not add hype, storytelling, or extra claims.]
+[If there are multiple garment components, mention them clearly and naturally.]
 
-KEY DETAILS
-[List details here with simple hyphens. Do NOT use bolding.]
-- Color: [Value]
-- Fabric: [Value]
-- Work: [Value]
-- [Other details...]
+Key Details:
+- Color: [Value if available]
+- Fabric: [Value if available]
+- Work: [Value if available]
+- Category: [Value if clearly available]
+- Set Includes: [List all included components if available]
+- Sizes: [Value if available]
+- Stitching: [Value if available]
+- Weight: [Value if available]
+- Price: [Value if available]
+- Code / SKU: [Value if available]
+- [Add any other important factual details from the raw text as separate bullet points]
 
 STRICT FORMATTING RULES:
-- NO bolding (e.g., **text**) in the output
-- NO headers (e.g., # or ##) in the output
-- NO "SEO" words in the output text
-- Pure, clean plain text only
+- Plain text only
+- NO markdown headings using # or ##
+- NO bold text
+- NO italic text
+- NO tables
+- NO emojis
+- NO explanations
+- NO extra commentary
+- Keep output clean, readable, and copy-friendly
+- Use section labels exactly as shown:
+  - Product Name:
+  - Product Description:
+  - Key Details:
+
+VERY IMPORTANT:
+- If SKU, code, price, MOQ, weight, size, or stitching details are present in the raw text, they MUST appear explicitly in Key Details
+- If the raw text is messy, reorganize it cleanly but do NOT lose any factual information
+- If a field is not available in the raw text, do NOT invent it and do NOT force it
 
 INPUT:
-${input}
+\${input}
 
 OUTPUT:
-Return only the product name, formatted description and key details.
-Do not add explanations or extra commentary.
-**CRITICAL**: Output the final result inside a single MARKDOWN CODE BLOCK so it can be easily copied.`;
+Return only the final formatted result inside a single markdown code block so it can be copied easily.`;
 
         try {
             await navigator.clipboard.writeText(template);

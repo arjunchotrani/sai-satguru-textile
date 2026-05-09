@@ -10,6 +10,7 @@ export const subcategoriesRoutes = new Hono<{ Bindings: Env; Variables: Variable
    (count ONLY non-deleted products)
 ======================= */
 import { getCache, setCache, CACHE_TTL } from "../utils/cache";
+import { generateUniqueSlug } from "../utils/slug";
 
 /* =======================
    GET all sub-categories
@@ -87,11 +88,7 @@ subcategoriesRoutes.post("/", adminAuth, async (c) => {
     );
   }
 
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  const slug = await generateUniqueSlug(supabase, name, "sub_categories");
 
   const { data, error } = await supabase
     .from("sub_categories")
@@ -135,15 +132,9 @@ subcategoriesRoutes.put("/:id", adminAuth, async (c) => {
     );
   }
 
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
   const { data, error } = await supabase
     .from("sub_categories")
-    .update({ name, slug, category_id, display_order: display_order ?? 100 })
+    .update({ name, category_id, display_order: display_order ?? 100 })
     .eq("id", id)
     .eq("is_deleted", false)
     .select()

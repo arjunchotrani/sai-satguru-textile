@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const revalidate = 300;
 import React from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';

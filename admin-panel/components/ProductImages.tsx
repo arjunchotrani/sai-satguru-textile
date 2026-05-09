@@ -168,14 +168,20 @@ const ProductImages: React.FC<Props> = ({ productId }) => {
                 setUploading(true);
 
                 try {
-                  // Parallel Uploads
-                  await Promise.all(files.map((file) => uploadFile(file)));
+                  // ✅ PARALLEL UPLOAD (Fastest)
+                  // Using allSettled so one bad file doesn't kill the whole batch
+                  const results = await Promise.allSettled(files.map((file) => uploadFile(file)));
+                  
+                  const failed = results.filter(r => r.status === 'rejected');
+                  if (failed.length > 0) {
+                    alert(`${failed.length} out of ${files.length} files failed to upload. The rest were successful.`);
+                  }
 
-                  // Refresh list ONCE after all are done
+                  // Refresh list
                   await fetchMedia();
                 } catch (err) {
-                  console.error("Batch upload failed", err);
-                  alert("Some files failed to upload");
+                  console.error("Batch upload error", err);
+                  alert("A critical error occurred during upload.");
                 } finally {
                   setUploading(false);
                   e.target.value = "";

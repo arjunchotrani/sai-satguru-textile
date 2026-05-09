@@ -109,3 +109,39 @@ brandsRoutes.delete("/:id", adminAuth, async (c) => {
 
     return c.json({ success: true, message: "Brand deleted" });
 });
+
+/* =======================
+   GET single brand (by ID or Slug)
+======================= */
+brandsRoutes.get("/:identifier", async (c) => {
+    const identifier = c.req.param("identifier");
+    const supabase = getSupabaseAdmin(c.env);
+
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    
+    let query = supabase.from("brands").select("*");
+
+    if (uuidRegex.test(identifier)) {
+        query = query.eq("id", identifier);
+    } else {
+        // We don't have a slug column, so we search by name (replacing hyphens with spaces for a loose match)
+        const nameGuess = identifier.replace(/-/g, " ");
+        query = query.ilike("name", `%${nameGuess}%`);
+    }
+
+    const { data, error } = await query.single();
+
+    if (error || !data) {
+        // Fallback: search all and find best slug match in JS if single query fails
+        const { data: allBrands } = await supabase.from("brands").select("id, name");
+        const found = (allBrands || []).find(b => 
+            b.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") === identifier
+        );
+        
+        if (found) return c.json({ success: true, data: found });
+        return c.json({ success: false, message: "Brand not found" }, 404);
+    }
+
+    return c.json({ success: true, data });
+});
+

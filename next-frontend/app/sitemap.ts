@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchCategories(),
     fetchSubCategories(),
     fetchBrands(),
-    fetchProducts(new URLSearchParams({ limit: '1000' }))
+    fetchProducts(new URLSearchParams({ limit: '1000', lean: 'true' }))
   ]);
 
   // 3. Category Pages

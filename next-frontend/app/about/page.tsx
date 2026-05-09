@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const revalidate = 86400;
 import React from 'react';
 import Link from 'next/link';
 import { Gem, Handshake, Truck, ChevronRight } from 'lucide-react';

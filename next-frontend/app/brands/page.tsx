@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const revalidate = 86400;
 import React from 'react';
 import { fetchBrands } from '../../lib/api';
 import { BrandsList } from '../../components/BrandsList';

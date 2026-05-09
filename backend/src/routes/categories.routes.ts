@@ -9,6 +9,7 @@ export const categoriesRoutes = new Hono<{ Bindings: Env; Variables: Variables }
    GET all categories (non-deleted)
 ======================= */
 import { getCache, setCache, CACHE_TTL } from "../utils/cache";
+import { generateUniqueSlug } from "../utils/slug";
 
 /* =======================
    GET all categories (non-deleted)
@@ -82,12 +83,7 @@ categoriesRoutes.post("/", adminAuth, async (c) => {
     return c.json({ message: "Category name is required" }, 400);
   }
 
-  // ✅ AUTO-GENERATE SLUG
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  const slug = await generateUniqueSlug(supabase, name, "categories");
 
   const { data, error } = await supabase
     .from("categories")
@@ -127,15 +123,9 @@ categoriesRoutes.put("/:id", adminAuth, async (c) => {
     return c.json({ message: "Category name is required" }, 400);
   }
 
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
   const { data, error } = await supabase
     .from("categories")
-    .update({ name, slug, display_order: display_order ?? 100 })
+    .update({ name, display_order: display_order ?? 100 })
     .eq("id", id)
     .eq("is_deleted", false)
     .select()

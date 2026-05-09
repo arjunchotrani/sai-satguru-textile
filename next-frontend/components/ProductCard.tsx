@@ -31,22 +31,9 @@ export const ProductCard: React.FC<Props> = ({ product, priority = false }) => {
   const slug = normalizeSlug(product.slug);
   const href = `/product/${slug}`;
 
-  // Performance Note: 
-  // We trigger a background fetch on hover to warm up the backend cache.
-  // This makes the subsequent transition feel near-instant as the result
-  // is likely already cached by the time the user clicks.
-  const handlePrefetch = () => {
-    // Only fetch if we are in a browser and slug is available
-    if (typeof window !== 'undefined' && slug) {
-      // Fire and forget - just to populate backend/worker caches
-      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/by-slug/${slug}?lean=true`).catch(() => {});
-    }
-  };
-
   return (
     <SmartLink
       href={href}
-      onMouseEnter={handlePrefetch}
       className="group relative bg-[#0a0a0a] overflow-hidden block cursor-pointer product-card-hover"
     >
 

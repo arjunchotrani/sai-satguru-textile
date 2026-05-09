@@ -3,6 +3,7 @@ import type { Env, Variables } from "../types/env";
 import { getSupabaseAdmin } from "../supabase";
 import { adminAuth } from "../middleware/auth";
 import { getCache, setCache, CACHE_TTL, invalidateCachePattern } from "../utils/cache";
+import { generateUniqueSlug } from "../utils/slug";
 
 export const productsRoutes = new Hono<{ Bindings: Env; Variables: Variables }>();
 
@@ -24,20 +25,22 @@ productsRoutes.get("/", async (c) => {
   const search = c.req.query("search") || "";
   const categoryId = c.req.query("category_id") || "";
   const subCategoryId = c.req.query("sub_category_id") || "";
-  const brandId = c.req.query("brand") || "";
+  const brandId = c.req.query("brand") || c.req.query("brand_id") || "";
   const brandType = c.req.query("brand_type") || "";
   const isFeatured = c.req.query("featured") || "";
   const status = c.req.query("status") || "";
   const sort = c.req.query("sort") || "latest"; // latest, price_asc, price_desc
 
   const isAdmin = c.req.url.includes("/admin/products");
+  const lean = c.req.query("lean") === "true";
 
   // 1️⃣ Cache Key Generation
-  const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}:${sort}`;
+  const cacheKey = `products:list:${isAdmin ? 'admin' : 'public'}:${page}:${limit}:${search}:${categoryId}:${subCategoryId}:${brandId}:${brandType}:${isFeatured}:${status}:${sort}:${lean ? "lean" : "full"}`;
+
 
   const cached = await getCache(c.env, cacheKey);
   if (cached && !isAdmin) {
-    c.header("Cache-Control", "public, s-maxage=60");
+    c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
     return c.json(cached);
   } else if (cached && isAdmin) {
     c.header("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -49,10 +52,19 @@ productsRoutes.get("/", async (c) => {
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
-  let query = supabase
-    .from("products")
-    .select(
+  const selectFields = lean
+    ? `
+      id,
+      name,
+      slug,
+      price,
+      product_images (
+        image_url,
+        is_primary,
+        display_order
+      )
       `
+    : `
       id,
       name,
       slug,
@@ -73,10 +85,16 @@ productsRoutes.get("/", async (c) => {
       brands (
         name
       )
-      `,
-      { count: "exact" }
-    )
+      `;
+
+  let query = supabase
+    .from("products")
+    .select(selectFields, { count: "exact" })
     .eq("is_deleted", status === "archived");
+
+  if (lean) {
+    query = query.limit(2, { foreignTable: 'product_images' });
+  }
 
   if (!isAdmin) {
     query = query.eq("is_active", true);
@@ -174,7 +192,7 @@ productsRoutes.get("/", async (c) => {
   );
 
   if (!isAdmin) {
-    c.header("Cache-Control", "public, s-maxage=60");
+    c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   } else {
     c.header("Cache-Control", "no-cache, no-store, must-revalidate");
   }
@@ -185,40 +203,108 @@ productsRoutes.get("/", async (c) => {
    🌍 GET SINGLE PRODUCT BY SLUG (PUBLIC)
 ======================= */
 productsRoutes.get("/by-slug/:slug", async (c) => {
+  const start = Date.now();
   const slug = c.req.param("slug");
   const isAdmin = c.req.url.includes("/admin/products");
+  const lean = c.req.query("lean") === "true";
 
-  const cacheKey = `product:detail:slug:${slug}:${isAdmin ? "admin" : "public"}`;
+  const cacheKey = `product:detail:slug:${slug}:${isAdmin ? "admin" : "public"}:${lean ? "lean" : "full"}`;
   const cached = await getCache(c.env, cacheKey);
-  if (cached) return c.json(cached);
+  if (cached) {
+    c.header("X-Cache", "HIT");
+    return c.json(cached);
+  }
 
   const supabase = c.get("supabase") || getSupabaseAdmin(c.env);
+  const queryStart = Date.now();
+  
+  // Normalize the input slug to ensure it matches the database's hyphenated indices
+  const normalizedInput = slug.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
-  let query = supabase
-    .from("products")
-    .select(`
+  // Rule 1 & 3: Ensure we have enough data for Above-the-fold and SEO.
+  const selectFields = lean 
+    ? `
+      id, name, slug, category_id, sub_category_id,
+      brand_id, brand_type, price, description,
+      product_images (image_url, is_primary, display_order),
+      brands (name),
+      categories:category_id (name, slug, label),
+      sub_categories:sub_category_id (name, slug, label)
+    `
+    : `
       id, name, slug, category_id, sub_category_id,
       brand_id, brand_type, brand, price, description,
-      is_active, created_at,
       product_images (image_url, is_primary, display_order),
-      brands (name)
-    `)
-    .eq("slug", slug)
+      brands (name),
+      categories:category_id (name, slug, label),
+      sub_categories:sub_category_id (name, slug, label)
+    `;
+
+  // Attempt 1: Primary lookup using the normalized slug (canonical)
+  let query = supabase
+    .from("products")
+    .select(selectFields)
+    .eq("slug", normalizedInput)
     .eq("is_deleted", false);
+
+  if (lean) {
+    query = query.limit(8, { foreignTable: 'product_images' });
+  }
 
   if (!isAdmin) query = query.eq("is_active", true);
 
   const { data, error } = await query.single();
+  let finalData = data;
 
-  if (error || !data) {
-    return c.json(
-      { success: false, message: "Product not found" }, 
-      404
-    );
+  if (error || !finalData) {
+    // FALLBACK: If exact slug fails, try normalizing the slug or searching by name
+    const normalizedIdentifier = slug.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+    
+    // 1. Try search by normalized slug (if current slug column has hyphens but identifier had spaces)
+    let fbQuery1 = supabase
+      .from("products")
+      .select(selectFields)
+      .eq("slug", normalizedIdentifier)
+      .eq("is_deleted", false);
+    
+    if (lean) fbQuery1 = fbQuery1.limit(8, { foreignTable: 'product_images' });
+    
+    const { data: fallbackData } = await fbQuery1.maybeSingle();
+      
+    if (fallbackData) {
+        finalData = fallbackData;
+    } else {
+        // 2. Try loose match by name (if naming is close)
+        const nameGuess = slug.replace(/-/g, " ");
+        let fbQuery2 = supabase
+            .from("products")
+            .select(selectFields)
+            .ilike("name", `%${nameGuess}%`)
+            .eq("is_deleted", false);
+            
+        if (lean) fbQuery2 = fbQuery2.limit(8, { foreignTable: 'product_images' });
+            
+        const { data: nameMatch } = await fbQuery2.maybeSingle();
+
+            
+        if (nameMatch) {
+            finalData = nameMatch;
+        } else {
+            return c.json({ success: false, message: "Product not found" }, 404);
+        }
+    }
   }
 
-  const sortedImages = (
-    (data as any).product_images || []
+  const queryDuration = Date.now() - queryStart;
+  const serializationStart = Date.now();
+
+  const isBranded = (finalData as any).brand_type === "Branded";
+  const brandNameField = (finalData as any).brands?.name || (finalData as any).brand || null;
+
+  // Rule 2 & Decision 1: Limit images in lean mode. 
+  // nested limit(8) handled in SQL query, so we just sort here.
+  let sortedImages = (
+    (finalData as any).product_images || []
   ).sort((a: any, b: any) => {
     if (b.is_primary && !a.is_primary) return 1;
     if (!b.is_primary && a.is_primary) return -1;
@@ -226,24 +312,45 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
   });
 
   const formatted = {
-    ...data,
-    brand: (data as any).brands?.name || data.brand || null,
-    brand_type: data.brand_type || "Non-Branded",
-    basePriceINR: data.price,
-    brandName: (data as any).brands?.name || data.brand || null,
+    ...(finalData as any),
+    brand: brandNameField,
+    brand_type: (finalData as any).brand_type || "Non-Branded",
+    basePriceINR: (finalData as any).price,
+    brandName: brandNameField,
     brandSlug: null,
     images: sortedImages.map((img: any) => img.image_url),
-    categoryId: data.category_id,
-    subCategoryId: data.sub_category_id,
+    categoryId: (finalData as any).category_id,
+    subCategoryId: (finalData as any).sub_category_id,
+
+    // Joined data for front-end breadcrumbs
+    category: (finalData as any).categories ? { 
+        name: (finalData as any).categories.name, 
+        slug: (finalData as any).categories.slug,
+        label: (finalData as any).categories.name 
+    } : null,
+    subCategory: (finalData as any).sub_categories ? { 
+        name: (finalData as any).sub_categories.name, 
+        slug: (finalData as any).sub_categories.slug,
+        label: (finalData as any).sub_categories.name 
+    } : null,
     product_images: undefined,
     brands: undefined,
+    categories: undefined,
+    sub_categories: undefined
   };
 
   const response = { success: true, data: formatted };
+  const serializationDuration = Date.now() - serializationStart;
+
+  console.log(`[Performance Audit] /by-slug/${slug} | Lean: ${lean} | T-Total: ${Date.now() - start}ms | T-Query: ${queryDuration}ms | T-Serial: ${serializationDuration}ms`);
+
   await setCache(c.env, cacheKey, response, CACHE_TTL.MEDIUM);
-  c.header("Cache-Control", "public, s-maxage=300");
+  c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   return c.json(response);
 });
+
+
+
 
 /* =======================
    🌍 GET SINGLE PRODUCT (PUBLIC)
@@ -327,7 +434,7 @@ productsRoutes.get("/:id", async (c) => {
   // 2️⃣ Set Cache (awaiting to ensure local wrangler doesn't drop it)
   await setCache(c.env, cacheKey, response, CACHE_TTL.MEDIUM);
 
-  c.header("Cache-Control", "public, s-maxage=300");
+  c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   return c.json(response);
 });
 
@@ -355,14 +462,7 @@ productsRoutes.post("/", adminAuth, async (c) => {
     );
   }
 
-  const slug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  // Append a short random string to ensure uniqueness
-  const uniqueSlug = `${slug}-${Math.random().toString(36).substring(2, 6)}`;
+  const finalSlug = await generateUniqueSlug(supabase, name, "products");
 
   // Resolve brand_id if missing but brand name provided
   let resolvedBrandId = brand_id;
@@ -379,7 +479,7 @@ productsRoutes.post("/", adminAuth, async (c) => {
     .from("products")
     .insert({
       name,
-      slug: uniqueSlug,
+      slug: finalSlug,
       category_id,
       sub_category_id: sub_category_id || null,
       brand_id: resolvedBrandId || null,
@@ -451,6 +551,8 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
       brand_type: brand_type || "Non-Branded",
       price,
       description: description || null,
+      // NOTE: We EXPLICITLY do not update the 'slug' here to prevent breaking 
+      // existing indexed URLs in Google Search Console.
     })
     .eq("id", id)
     .eq("is_deleted", false);

@@ -41,7 +41,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
                 alt={alt}
                 fill
                 className={`object-contain`}
-                loading={priority ? "eager" : "lazy"}
                 priority={priority}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 unoptimized // Use wsrv.nl's output directly instead of passing through _next/image processing to save Vercel/Cloudflare compute
