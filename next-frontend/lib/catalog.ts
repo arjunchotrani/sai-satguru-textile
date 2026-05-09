@@ -4,7 +4,7 @@ import { Category, SubCategory } from './types';
 let categoryCache: Category[] | null = null;
 let subCategoryCache: SubCategory[] | null = null;
 let lastFetch: number = 0;
-const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
 
 /**
  * Returns the full catalog of categories and subcategories.

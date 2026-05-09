@@ -92,8 +92,8 @@ export async function serverFetch<T>(endpoint: string, options?: RequestInit): P
       headers: {
         'Content-Type': 'application/json',
       },
-      // Default revalidation of 60 seconds for catalog data
-      next: { revalidate: 60 },
+      // Default revalidation of 10 minutes for general data
+      next: { revalidate: 600 },
       ...options,
     });
 
@@ -132,7 +132,7 @@ export async function serverFetch<T>(endpoint: string, options?: RequestInit): P
  */
 export const fetchCategories = cache(async function(): Promise<Category[]> {
   try {
-    const res = await serverFetch<Category[] | { data?: Category[], categories?: Category[] }>('/categories');
+    const res = await serverFetch<Category[] | { data?: Category[], categories?: Category[] }>('/categories', { next: { revalidate: 3600 } });
     return Array.isArray(res) ? res : (res.data || res.categories || []);
   } catch (error) {
     console.error("Error fetching categories:", error);
@@ -145,7 +145,7 @@ export const fetchCategories = cache(async function(): Promise<Category[]> {
  */
 export const fetchSubCategories = cache(async function(): Promise<SubCategory[]> {
   try {
-    const res = await serverFetch<SubCategory[] | { data?: SubCategory[], subcategories?: SubCategory[] }>('/subcategories');
+    const res = await serverFetch<SubCategory[] | { data?: SubCategory[], subcategories?: SubCategory[] }>('/subcategories', { next: { revalidate: 3600 } });
     return Array.isArray(res) ? res : (res.data || res.subcategories || []);
   } catch (error) {
     console.error("Error fetching subcategories:", error);

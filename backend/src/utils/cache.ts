@@ -2,8 +2,8 @@ import type { Env } from "../types/env";
 
 export const CACHE_TTL = {
     SHORT: 60, // 1 minute
-    MEDIUM: 300, // 5 minutes
-    LONG: 3600, // 1 hour
+    MEDIUM: 3600, // 1 hour (Increased from 5 mins)
+    LONG: 86400, // 24 hours (Increased from 1 hour)
 };
 
 export async function getCache<T>(
