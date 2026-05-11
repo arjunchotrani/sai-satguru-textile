@@ -19,18 +19,18 @@ interface SplashGateProps {
 export const SplashGate: React.FC<SplashGateProps> = ({ children, alreadySeen = false }) => {
   const [phase, setPhase] = useState<'splash' | 'fading' | 'done'>(alreadySeen ? 'done' : 'splash');
 
-  // 1. Client-side Persistence Check (Secondary Layer)
-  // Runs once on mount to catch cases where the server-side cookie check was bypassed.
+  // 1. Detect Refresh & Session State
   useEffect(() => {
-    if (alreadySeen) return;
+    // 🚀 Detect if this is a hard refresh or page reload
+    const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    const isReload = nav?.type === 'reload';
+    
+    // Check if they've already seen it in this specific tab session
+    const hasSeenInSession = sessionStorage.getItem(SPLASH_COOKIE_NAME);
 
-    try {
-      const hasSeenLocal = localStorage.getItem(SPLASH_COOKIE_NAME);
-      if (hasSeenLocal) {
-        setPhase('done');
-      }
-    } catch (e) {
-      // Ignore storage errors (e.g. private mode)
+    if (isReload || hasSeenInSession || alreadySeen) {
+      setPhase('done');
+      return;
     }
   }, [alreadySeen]);
 
@@ -41,13 +41,12 @@ export const SplashGate: React.FC<SplashGateProps> = ({ children, alreadySeen = 
     const fadeTimer = setTimeout(() => {
       setPhase('fading');
       
-      // Dual-Layer Persistence Setting
-      const expiry = 60 * 60 * 24 * 365; // 1 year
-      document.cookie = `${SPLASH_COOKIE_NAME}=true; path=/; max-age=${expiry}; SameSite=Lax`;
+      // ✅ Set Session Storage so it doesn't show again in this tab (until refresh)
+      // Note: We don't set a long-term cookie anymore so it shows on fresh visits
       try {
-        localStorage.setItem(SPLASH_COOKIE_NAME, 'true');
+        sessionStorage.setItem(SPLASH_COOKIE_NAME, 'true');
       } catch (e) {
-        console.error("Failed to set localStorage", e);
+        console.error("Failed to set sessionStorage", e);
       }
     }, 1250);
 

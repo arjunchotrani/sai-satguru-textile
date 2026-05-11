@@ -38,10 +38,18 @@ app.use("*", async (c, next) => {
 app.use(
   "*",
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://sai-satguru-textile.vercel.app"
-    ],
+    origin: (origin, c) => {
+      // 🌐 Merge hardcoded origins with those from environment variables
+      const allowed = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://sai-satguru-textile.vercel.app",
+        ...(c.env.ALLOWED_ORIGINS?.split(",").map((o: string) => o.trim()) || []),
+      ];
+
+      if (allowed.includes(origin)) return origin;
+      return "https://sai-satguru-textile.vercel.app"; // Default fallback
+    },
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type", "Authorization"],
   })
