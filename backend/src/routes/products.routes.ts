@@ -548,9 +548,13 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
+  // Fetch slug for cache invalidation
+  const { data: pData } = await supabase.from("products").select("slug").eq("id", id).single();
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${id}`)
+    invalidateCachePattern(c.env, `product:detail:${id}`),
+    pData?.slug ? invalidateCachePattern(c.env, `product:detail:slug:${pData.slug}`) : Promise.resolve()
   ]));
 
   return c.json({ success: true });
@@ -577,9 +581,13 @@ productsRoutes.put("/:id/status", adminAuth, async (c) => {
     return c.json({ success: false }, 500);
   }
 
+  // Fetch slug for cache invalidation
+  const { data: pData } = await supabase.from("products").select("slug").eq("id", id).single();
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${id}`)
+    invalidateCachePattern(c.env, `product:detail:${id}`),
+    pData?.slug ? invalidateCachePattern(c.env, `product:detail:slug:${pData.slug}`) : Promise.resolve()
   ]));
   return c.json({ success: true });
 });
@@ -600,9 +608,13 @@ productsRoutes.delete("/:id", adminAuth, async (c) => {
     return c.json({ success: false }, 500);
   }
 
+  // Fetch slug for cache invalidation
+  const { data: pData } = await supabase.from("products").select("slug").eq("id", id).single();
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${id}`)
+    invalidateCachePattern(c.env, `product:detail:${id}`),
+    pData?.slug ? invalidateCachePattern(c.env, `product:detail:slug:${pData.slug}`) : Promise.resolve()
   ]));
   return c.json({ success: true });
 });

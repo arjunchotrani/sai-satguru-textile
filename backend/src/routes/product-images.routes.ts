@@ -177,7 +177,7 @@ productImagesRoutes.put("/:id/set-primary", adminAuth, async (c) => {
 
   const { data } = await supabase
     .from("product_images")
-    .select("product_id")
+    .select("product_id, products:product_id(slug)")
     .eq("id", id)
     .single();
 
@@ -198,9 +198,12 @@ productImagesRoutes.put("/:id/set-primary", adminAuth, async (c) => {
     .update({ is_primary: true })
     .eq("id", id);
 
+  const productSlug = (data as any)?.products?.slug;
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${data.product_id}`)
+    invalidateCachePattern(c.env, `product:detail:${data.product_id}`),
+    productSlug ? invalidateCachePattern(c.env, `product:detail:slug:${productSlug}`) : Promise.resolve()
   ]));
 
   return c.json({ success: true });
@@ -237,9 +240,17 @@ productImagesRoutes.put("/reorder", adminAuth, async (c) => {
       .eq("product_id", product_id); // Safety check
   }
 
+  // 3. Fetch slug for cache invalidation
+  const { data: pData } = await supabase
+    .from("products")
+    .select("slug")
+    .eq("id", product_id)
+    .single();
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${product_id}`)
+    invalidateCachePattern(c.env, `product:detail:${product_id}`),
+    pData?.slug ? invalidateCachePattern(c.env, `product:detail:slug:${pData.slug}`) : Promise.resolve()
   ]));
 
   return c.json({ success: true, message: "Order updated" });
@@ -254,7 +265,7 @@ productImagesRoutes.delete("/:id", adminAuth, async (c) => {
 
   const { data } = await supabase
     .from("product_images")
-    .select("image_url, product_id, is_primary")
+    .select("image_url, product_id, is_primary, products:product_id(slug)")
     .eq("id", id)
     .single();
 
@@ -290,9 +301,12 @@ productImagesRoutes.delete("/:id", adminAuth, async (c) => {
     }
   }
 
+  const productSlug = (data as any)?.products?.slug;
+
   c.executionCtx.waitUntil(Promise.all([
     invalidateCachePattern(c.env, "products:list"),
-    invalidateCachePattern(c.env, `product:detail:${data.product_id}`)
+    invalidateCachePattern(c.env, `product:detail:${data.product_id}`),
+    productSlug ? invalidateCachePattern(c.env, `product:detail:slug:${productSlug}`) : Promise.resolve()
   ]));
 
   return c.json({ success: true });

@@ -45,28 +45,27 @@ STRICT RULES (DO NOT BREAK):
 - Maintain Indian textile terminology exactly
 - If a detail exists in the raw text, it must not be omitted from the final output
 
-OUTPUT FORMAT (MANDATORY):
+REQUIRED OUTPUT STRUCTURE:
+Generate the content following this exact structure, but REPLACE the bracketed placeholders with the actual values you derive from the INPUT. 
+Do NOT include any placeholders like "[Insert ...]" or "[Value if available]" in your final response. If a detail is missing, simply omit that bullet point from the Key Details section.
 
-Product Name: [Write the short professional product name here]
+Product Name: (Your suggested short professional name)
 
 Product Description:
-[Write 1 clean professional paragraph in plain text.]
-[Use only the information given in the raw text.]
-[Do not add hype, storytelling, or extra claims.]
-[If there are multiple garment components, mention them clearly and naturally.]
+(Your generated clean professional paragraph in plain text. Use only provided info. No hype.)
 
 Key Details:
-- Color: [Value if available]
-- Fabric: [Value if available]
-- Work: [Value if available]
-- Category: [Value if clearly available]
-- Set Includes: [List all included components if available]
-- Sizes: [Value if available]
-- Stitching: [Value if available]
-- Weight: [Value if available]
-- Price: [Value if available]
-- Code / SKU: [Value if available]
-- [Add any other important factual details from the raw text as separate bullet points]
+- Color: (Value)
+- Fabric: (Value)
+- Work: (Value)
+- Category: (Value)
+- Set Includes: (Value)
+- Sizes: (Value)
+- Stitching: (Value)
+- Weight: (Value)
+- Price: (Value)
+- Code / SKU: (Value)
+- (Add any other important factual details as separate bullet points)
 
 STRICT FORMATTING RULES:
 - Plain text only
@@ -89,10 +88,10 @@ VERY IMPORTANT:
 - If a field is not available in the raw text, do NOT invent it and do NOT force it
 
 INPUT:
-\${input}
+${input}
 
 OUTPUT:
-Return only the final formatted result inside a single markdown code block so it can be copied easily.`;
+Return only the final formatted result (fully populated with data) inside a single markdown code block so it can be copied easily.`;
 
         try {
             await navigator.clipboard.writeText(template);
