@@ -186,9 +186,9 @@ productsRoutes.get("/", async (c) => {
     limit,
   };
 
-  // 2️⃣ Set Cache
+  // 2️⃣ Set Cache (5 min TTL — balances freshness vs KV write volume)
   c.executionCtx.waitUntil(
-    setCache(c.env, cacheKey, response, CACHE_TTL.SHORT)
+    setCache(c.env, cacheKey, response, 300)
   );
 
   if (!isAdmin) {

@@ -12,6 +12,36 @@ export const subcategoriesRoutes = new Hono<{ Bindings: Env; Variables: Variable
 import { getCache, setCache, CACHE_TTL } from "../utils/cache";
 import { generateUniqueSlug } from "../utils/slug";
 
+export async function refreshSubcategoriesCache(env: Env, supabase: any) {
+  const { data } = await supabase
+    .from("sub_categories")
+    .select(`
+      id,
+      name,
+      slug,
+      category_id,
+      is_active,
+      created_at,
+      display_order,
+      products:products(count)
+    `)
+    .eq("is_deleted", false)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (!data) return;
+  const formatted = data.map((s: any) => ({
+    id: s.id,
+    name: s.name,
+    slug: s.slug,
+    category_id: s.category_id,
+    is_active: s.is_active,
+    created_at: s.created_at,
+    display_order: s.display_order || 0,
+    product_count: s.products?.[0]?.count ?? 0,
+  }));
+  await setCache(env, "subcategories:list", formatted, CACHE_TTL.MEDIUM);
+}
+
 /* =======================
    GET all sub-categories
    (count ONLY non-deleted products)
@@ -107,8 +137,7 @@ subcategoriesRoutes.post("/", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("subcategories:list");
+  c.executionCtx.waitUntil(refreshSubcategoriesCache(c.env, supabase));
 
   return c.json({
     success: true,
@@ -144,8 +173,7 @@ subcategoriesRoutes.put("/:id", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("subcategories:list");
+  c.executionCtx.waitUntil(refreshSubcategoriesCache(c.env, supabase));
 
   return c.json({
     success: true,
@@ -176,8 +204,7 @@ subcategoriesRoutes.put("/:id/status", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("subcategories:list");
+  c.executionCtx.waitUntil(refreshSubcategoriesCache(c.env, supabase));
 
   return c.json({ success: true });
 });
@@ -222,8 +249,7 @@ subcategoriesRoutes.delete("/:id", adminAuth, async (c) => {
     return c.json({ success: false, message: delError.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("subcategories:list");
+  c.executionCtx.waitUntil(refreshSubcategoriesCache(c.env, supabase));
 
   return c.json({ success: true, message: "Sub-category removed" });
 });

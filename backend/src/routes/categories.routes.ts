@@ -10,6 +10,37 @@ export const categoriesRoutes = new Hono<{ Bindings: Env; Variables: Variables }
 ======================= */
 import { getCache, setCache, CACHE_TTL } from "../utils/cache";
 import { generateUniqueSlug } from "../utils/slug";
+import { refreshSubcategoriesCache } from "./subcategories.routes";
+
+async function refreshCategoriesCache(env: Env, supabase: any) {
+  const { data } = await supabase
+    .from("categories")
+    .select(`
+      id,
+      name,
+      slug,
+      is_active,
+      created_at,
+      display_order,
+      sub_categories:sub_categories(count),
+      products:products(count)
+    `)
+    .eq("is_deleted", false)
+    .order("display_order", { ascending: true })
+    .order("created_at", { ascending: false });
+  if (!data) return;
+  const formatted = data.map((cat: any) => ({
+    id: cat.id,
+    name: cat.name,
+    slug: cat.slug,
+    is_active: cat.is_active,
+    created_at: cat.created_at,
+    display_order: cat.display_order || 0,
+    subcategory_count: cat.sub_categories?.[0]?.count ?? 0,
+    product_count: cat.products?.[0]?.count ?? 0,
+  }));
+  await setCache(env, "categories:list", formatted, CACHE_TTL.MEDIUM);
+}
 
 /* =======================
    GET all categories (non-deleted)
@@ -101,8 +132,7 @@ categoriesRoutes.post("/", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("categories:list");
+  c.executionCtx.waitUntil(refreshCategoriesCache(c.env, supabase));
 
   return c.json({
     success: true,
@@ -135,8 +165,7 @@ categoriesRoutes.put("/:id", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("categories:list");
+  c.executionCtx.waitUntil(refreshCategoriesCache(c.env, supabase));
 
   return c.json({
     success: true,
@@ -178,8 +207,11 @@ categoriesRoutes.put("/:id/status", adminAuth, async (c) => {
       .eq("is_deleted", false);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("categories:list");
+  c.executionCtx.waitUntil(
+    is_active === false
+      ? Promise.all([refreshCategoriesCache(c.env, supabase), refreshSubcategoriesCache(c.env, supabase)])
+      : refreshCategoriesCache(c.env, supabase)
+  );
 
   return c.json({ success: true });
 });
@@ -226,8 +258,7 @@ categoriesRoutes.delete("/:id", adminAuth, async (c) => {
     return c.json({ success: false, message: error.message }, 500);
   }
 
-  // Invalidate Cache
-  await c.env.CACHE_KV.delete("categories:list");
+  c.executionCtx.waitUntil(refreshCategoriesCache(c.env, supabase));
 
   return c.json({
     success: true,
