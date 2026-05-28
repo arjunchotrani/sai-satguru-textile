@@ -55,8 +55,9 @@ export function mapBackendProduct(backendProduct: BackendProduct | any): Product
         whatsappInquiryStatus: backendProduct.whatsapp_inquiry_status,
         displayOrder: backendProduct.display_order ?? 0,
         tags: Array.isArray(backendProduct.tags) ? backendProduct.tags : [],
-        metaTitle: backendProduct.meta_title,
-        metaDescription: backendProduct.meta_description,
+        metaTitle: backendProduct.seo_title || backendProduct.meta_title || null,
+        metaDescription: backendProduct.meta_description || null,
+        keywords: backendProduct.keywords || null,
         // Relations
         category: backendProduct.categories ? { id: backendProduct.categories?.id, name: backendProduct.categories?.name, slug: backendProduct.categories?.slug, label: backendProduct.categories?.label || backendProduct.categories?.name || 'Category' } : undefined,
         subCategory: (backendProduct.sub_categories || backendProduct.subcategories) ? { 

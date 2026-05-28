@@ -43,8 +43,9 @@ export interface Product {
   whatsappInquiryStatus?: string;
   displayOrder?: number;
   tags?: string[];
-  metaTitle?: string;
-  metaDescription?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  keywords?: string | null;
   // Relations
   // Relations
   category?: { id: string; name: string; slug: string; label: string };

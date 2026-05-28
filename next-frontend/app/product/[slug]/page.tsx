@@ -40,23 +40,23 @@ export async function generateMetadata({
   if (!product) return {};
 
   const category = product.category || null;
-  
-  const title = buildProductSeoTitle(
-    product.name, 
-    product.brandName, 
-    category?.label || category?.name
-  );
-  
-  const description = buildProductSeoDesc(
-    product.name, 
-    product.brandName, 
-    category?.label || category?.name, 
-    product.description
-  );
+
+  const title = product.metaTitle
+    ? `${product.metaTitle} | Sai Satguru Textile`
+    : buildProductSeoTitle(product.name, product.brandName, category?.label || category?.name);
+
+  const description = product.metaDescription
+    || buildProductSeoDesc(
+        product.name,
+        product.brandName,
+        category?.label || category?.name,
+        product.description
+      );
 
   return {
-    title, // Layout template will append " | Sai Satguru Textile"
+    title,
     description,
+    ...(product.keywords ? { keywords: product.keywords } : {}),
     alternates: {
       canonical: `/product/${product.slug}`,
     },

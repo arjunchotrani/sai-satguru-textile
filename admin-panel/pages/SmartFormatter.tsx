@@ -21,77 +21,87 @@ const SmartFormatter: React.FC = () => {
     const handleCopyRefinementPrompt = async () => {
         if (!input.trim()) return;
 
-        const template = `You are an expert textile product description formatter for an Indian wholesale textile website called Sai Satguru Textile (SST).
+        const template = `You are an expert product content writer for Sai Satguru Textile (SST), an Indian wholesale textile business based in Surat. You format raw supplier text into clean, catalog-ready product listings and write SEO content optimized for Google search.
 
 TASK:
-Convert the given RAW PRODUCT TEXT into a clean, professional, catalog-friendly product description suitable for the SST website.
-Also suggest a short, professional, searchable PRODUCT NAME (maximum 3-4 words) based strictly on the raw product text.
+From the RAW PRODUCT TEXT below, produce four things:
+1. A short, professional PRODUCT NAME (3–5 words max)
+2. A clean PRODUCT DESCRIPTION paragraph
+3. A structured KEY DETAILS list
+4. SEO META DESCRIPTION (for Google search snippet)
+5. SEO KEYWORDS (for meta keywords tag)
 
-IMPORTANT GOAL:
-The output must feel like a real wholesale textile catalog entry used on a premium Indian textile website.
-It must remain factual, structured, and easy to use for both website display and WhatsApp sharing.
+GENERAL CONTENT RULES (apply to all sections):
+- Base everything strictly on the raw text — do NOT invent, infer, or add details
+- Do NOT remove any data from the raw text
+- Preserve ALL: fabrics, work types, measurements, sizes, prices, weights, codes, SKU values, set contents, stitching details, stitch types, GSM values
+- Separate each garment component clearly when relevant (e.g. Lehenga, Blouse, Dupatta, Kurta, Pant, Jacket, Palazzo, Sharara, etc.)
+- Do NOT add promotional adjectives (premium, luxury, exclusive, elegant, designer, best) unless present in the raw text
+- Do NOT change numbers, units, fabric names, or Indian textile terminology
+- Fix only spelling, punctuation, capitalization, and formatting
+- If SKU, code, price, MOQ, weight, size, or stitching are in the raw text, they MUST appear in Key Details
 
-STRICT RULES (DO NOT BREAK):
-- Suggest a PRODUCT NAME at the very beginning of the output
-- The product name must be short, professional, catalog-friendly, and based only on the provided raw text
-- Do NOT invent, assume, infer, or add any missing information
-- Do NOT remove any product data
-- Do NOT generalize or summarize away important details
-- Preserve ALL fabrics, work details, measurements, sizes, prices, weights, codes, SKU values, set contents, and stitching information exactly as given
-- Keep each product component clearly separated when relevant (Lehenga, Blouse, Dupatta, Top, Bottom, Palazzo, Kurta, Pant, Jacket, etc.)
-- Do NOT add marketing words like “premium”, “designer”, “best”, “luxury”, “exclusive”, “elegant”, or similar promotional adjectives unless they already exist in the raw text
-- Do NOT change numbers, units, fabric names, GSM, sizes, or textile terminology
-- Correct spelling, punctuation, capitalization, and formatting only
-- Maintain Indian textile terminology exactly
-- If a detail exists in the raw text, it must not be omitted from the final output
+PRODUCT DESCRIPTION RULES (SEO-optimized):
+- Write 80–130 words — enough for Google to index meaningful content
+- Open the first sentence with the primary keyword naturally (e.g. "This banarasi silk lehenga..." or "The cotton embroidery kurti set...")
+- Weave in the main fabric, work type, and garment category as natural phrases — not as a list
+- If the product is suitable for a specific occasion (wedding, festival, daily wear, party wear, etc.) and this is clear from the raw text, mention it once naturally
+- Mention "Sai Satguru Textile" or "available for wholesale from Surat" once at the end
+- Every factual detail (color, fabric, work, set contents) must still be covered — SEO is not an excuse to drop product facts
+- Do NOT keyword-stuff — keywords should appear naturally, not repeated mechanically
+- Tone: informative and confident, not salesy or hype-driven
 
-REQUIRED OUTPUT STRUCTURE:
-Generate the content following this exact structure, but REPLACE the bracketed placeholders with the actual values you derive from the INPUT. 
-Do NOT include any placeholders like "[Insert ...]" or "[Value if available]" in your final response. If a detail is missing, simply omit that bullet point from the Key Details section.
+SEO META DESCRIPTION RULES:
+- Maximum 155 characters (hard limit — count carefully)
+- Written as a natural, readable sentence for Google search results
+- Must include: the product name or type, 1–2 key fabric/work details, and “Sai Satguru Textile” or “wholesale from Surat”
+- End with a subtle call-to-action: “Enquire on WhatsApp.” or “Wholesale enquiry welcome.”
+- Do NOT use promotional fluff — keep it factual and specific
+- Example format: “Banarasi silk lehenga with zari work, available in 6 sizes. Wholesale enquiry from Sai Satguru Textile, Surat.”
 
-Product Name: (Your suggested short professional name)
+SEO KEYWORDS RULES:
+- Output 8–12 comma-separated keywords
+- Include: specific product type, fabric name, work type, occasion (if clear from text), relevant Indian fashion terms, “wholesale”, “Surat”, and the brand name if present
+- Mix broad terms (e.g. “silk saree”) with specific terms (e.g. “banarasi silk saree wholesale surat”)
+- Use lowercase, no hashtags, no punctuation other than commas
+- Do NOT pad with irrelevant generic terms
+
+OUTPUT FORMAT (use exactly these section labels, plain text only):
+
+Product Name: <your 3–5 word name>
 
 Product Description:
-(Your generated clean professional paragraph in plain text. Use only provided info. No hype.)
+<80–130 word SEO-optimized paragraph — opens with primary keyword, covers all product facts naturally, ends with a wholesale/Surat mention>
 
 Key Details:
-- Color: (Value)
-- Fabric: (Value)
-- Work: (Value)
-- Category: (Value)
-- Set Includes: (Value)
-- Sizes: (Value)
-- Stitching: (Value)
-- Weight: (Value)
-- Price: (Value)
-- Code / SKU: (Value)
-- (Add any other important factual details as separate bullet points)
+- Color: <value>
+- Fabric: <value>
+- Work: <value>
+- Category: <value>
+- Set Includes: <value>
+- Sizes: <value>
+- Stitching: <value>
+- Weight: <value>
+- Price: <value>
+- Code / SKU: <value>
+- <any other factual detail from raw text as additional bullets>
 
-STRICT FORMATTING RULES:
-- Plain text only
-- NO markdown headings using # or ##
-- NO bold text
-- NO italic text
-- NO tables
-- NO emojis
-- NO explanations
-- NO extra commentary
-- Keep output clean, readable, and copy-friendly
-- Use section labels exactly as shown:
-  - Product Name:
-  - Product Description:
-  - Key Details:
+SEO Meta Description:
+<your 155-character max description>
 
-VERY IMPORTANT:
-- If SKU, code, price, MOQ, weight, size, or stitching details are present in the raw text, they MUST appear explicitly in Key Details
-- If the raw text is messy, reorganize it cleanly but do NOT lose any factual information
-- If a field is not available in the raw text, do NOT invent it and do NOT force it
+SEO Keywords:
+<keyword 1>, <keyword 2>, <keyword 3>, ...
+
+FORMATTING CONSTRAINTS:
+- Plain text only — no markdown (#, **, *, _), no tables, no emojis
+- No explanations, commentary, or notes about what you did
+- Omit any Key Details bullet entirely if that field is not in the raw text — do not write “N/A” or leave blanks
+- Return only the populated output — no wrapper text before or after
 
 INPUT:
 ${input}
 
-OUTPUT:
-Return only the final formatted result (fully populated with data) inside a single markdown code block so it can be copied easily.`;
+OUTPUT:`;
 
         try {
             await navigator.clipboard.writeText(template);
@@ -191,8 +201,7 @@ Return only the final formatted result (fully populated with data) inside a sing
             </div>
 
             <p className="text-center text-xs text-slate-400 mt-6 max-w-md mx-auto leading-relaxed">
-                <strong>Tip:</strong> After refining in ChatGPT, simply copy the result and paste it back into your
-                product description field. No data is stored or processed here.
+                <strong>Tip:</strong> The output now includes <strong className="text-slate-500">SEO Meta Description</strong> and <strong className="text-slate-500">SEO Keywords</strong> — copy them directly into the SEO section of the product form. No data is stored or processed here.
             </p>
         </div>
     );

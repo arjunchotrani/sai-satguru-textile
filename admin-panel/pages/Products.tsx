@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Filter,
   ChevronDown,
+  Globe,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
@@ -88,7 +89,11 @@ const Products: React.FC = () => {
     description: "",
     brand_type: "Branded" as "Branded" | "Non-Branded", // Default
     brand: "",
+    seo_title: "",
+    meta_description: "",
+    keywords: "",
   });
+  const [seoOpen, setSeoOpen] = useState(false);
 
   /* ================= SEARCH DEBOUNCE ================= */
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -143,6 +148,9 @@ const Products: React.FC = () => {
         description: fullProduct.description || prev.description || "",
         brand_type: fullProduct.brand_type || "Branded",
         brand: fullProduct.brand || "",
+        seo_title: (fullProduct as any).seo_title ?? prev.seo_title,
+        meta_description: (fullProduct as any).meta_description ?? prev.meta_description,
+        keywords: (fullProduct as any).keywords ?? prev.keywords,
       }));
     }
   }, [fullProduct, editing]);
@@ -244,6 +252,9 @@ const Products: React.FC = () => {
       price: Number(form.price),
       description: form.description,
       brand_type: form.brand_type,
+      seo_title: form.seo_title || null,
+      meta_description: form.meta_description || null,
+      keywords: form.keywords || null,
     };
 
     // For Branded products, use the selected brand.
@@ -340,7 +351,11 @@ const Products: React.FC = () => {
               description: "",
               brand_type: "Branded",
               brand: "",
+              seo_title: "",
+              meta_description: "",
+              keywords: "",
             });
+            setSeoOpen(false);
             setDrawerOpen(true);
           }}
           className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold flex justify-center items-center gap-2 shadow-sm shadow-indigo-200 transition-colors"
@@ -440,7 +455,11 @@ const Products: React.FC = () => {
                               description: p.description || "",
                               brand_type: (p.brand_type === "Branded" && p.brand && p.brand.toLowerCase() !== "generic") ? "Branded" : "Non-Branded",
                               brand: p.brand && p.brand.toLowerCase() === "generic" ? "Generic" : (p.brand || ""),
+                              seo_title: (p as any).seo_title || "",
+                              meta_description: (p as any).meta_description || "",
+                              keywords: (p as any).keywords || "",
                             });
+                            setSeoOpen(false);
                             setDrawerOpen(true);
                           }}
                           className="p-2 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg"
@@ -764,6 +783,104 @@ const Products: React.FC = () => {
                   }
                 />
               </div>
+            </div>
+
+            {/* SEO SECTION */}
+            <div className="border border-slate-200 rounded-xl overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setSeoOpen((o) => !o)}
+                className="w-full flex items-center gap-3 p-4 bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+              >
+                <Globe size={18} className="text-indigo-500 shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800">Search Engine Optimization</p>
+                  <p className="text-xs text-slate-500">Control how this product appears in Google.</p>
+                </div>
+                <ChevronDown
+                  size={16}
+                  className={`text-slate-400 shrink-0 transition-transform duration-200 ${seoOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {seoOpen && (
+                <div className="p-4 space-y-4 border-t border-slate-200">
+                  {/* SEO Title */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-sm font-medium text-slate-700">SEO Title</label>
+                      <span className={`text-xs font-medium ${form.seo_title.length > 60 ? "text-red-500" : "text-slate-400"}`}>
+                        {form.seo_title.length} / 60
+                      </span>
+                    </div>
+                    <input
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm"
+                      placeholder="e.g. Banarasi Silk Saree | Sai Satguru Textile"
+                      maxLength={60}
+                      value={form.seo_title}
+                      onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
+                    />
+                  </div>
+
+                  {/* Meta Description */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-sm font-medium text-slate-700">Meta Description</label>
+                      <span className={`text-xs font-medium ${form.meta_description.length > 160 ? "text-red-500" : "text-slate-400"}`}>
+                        {form.meta_description.length} / 160
+                      </span>
+                    </div>
+                    <textarea
+                      rows={3}
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm resize-none"
+                      placeholder="Brief description of the product for search results..."
+                      maxLength={160}
+                      value={form.meta_description}
+                      onChange={(e) => setForm({ ...form, meta_description: e.target.value })}
+                    />
+                  </div>
+
+                  {/* Keywords */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Keywords</label>
+                    <input
+                      className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 outline-none text-sm"
+                      placeholder="silk saree, ethnic wear, handloom..."
+                      value={form.keywords}
+                      onChange={(e) => setForm({ ...form, keywords: e.target.value })}
+                    />
+                    <p className="text-xs text-slate-400 mt-1">Separate keywords with commas.</p>
+                  </div>
+
+                  {/* Google Preview */}
+                  <div className="bg-white border border-slate-200 rounded-xl p-4">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                      Google Preview
+                    </p>
+                    <div className="space-y-0.5">
+                      <p className="text-[13px] text-slate-500 truncate">
+                        https://saisatgurutextile.com &rsaquo; products &rsaquo;{" "}
+                        <span className="text-slate-400">
+                          {form.name
+                            ? form.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "")
+                            : "product-slug"}
+                        </span>
+                      </p>
+                      <p className="text-[16px] text-blue-700 font-medium leading-snug truncate">
+                        {form.seo_title
+                          ? `${form.seo_title} | Sai Satguru Textile`
+                          : form.name
+                          ? `${form.name} | Sai Satguru Textile`
+                          : "Product Name | Sai Satguru Textile"}
+                      </p>
+                      <p className="text-[13px] text-slate-600 leading-snug line-clamp-2">
+                        {form.meta_description || "Meta description will appear here once you type it above."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="pt-4 border-t">

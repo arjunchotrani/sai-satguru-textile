@@ -75,6 +75,9 @@ productsRoutes.get("/", async (c) => {
       brand,
       price,
       description,
+      seo_title,
+      meta_description,
+      keywords,
       is_active,
       created_at,
       product_images (
@@ -226,6 +229,7 @@ productsRoutes.get("/by-slug/:slug", async (c) => {
   const selectFields = `
       id, name, slug, category_id, sub_category_id,
       brand_id, brand_type, brand, price, description,
+      seo_title, meta_description, keywords,
       product_images (image_url, is_primary, display_order),
       brands (name),
       categories:category_id (name, slug),
@@ -372,6 +376,9 @@ productsRoutes.get("/:id", async (c) => {
       brand,
       price,
       description,
+      seo_title,
+      meta_description,
+      keywords,
       is_active,
       created_at,
       product_images (
@@ -440,6 +447,9 @@ productsRoutes.post("/", adminAuth, async (c) => {
     brand_type,
     price,
     description,
+    seo_title,
+    meta_description,
+    keywords,
   } = await c.req.json();
 
   if (!name || !category_id || price === undefined) {
@@ -474,6 +484,9 @@ productsRoutes.post("/", adminAuth, async (c) => {
       brand_type: brand_type || "Non-Branded",
       price,
       description: description || null,
+      seo_title: seo_title || null,
+      meta_description: meta_description || null,
+      keywords: keywords || null,
       is_active: true,
       is_deleted: false,
     })
@@ -507,6 +520,9 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
     brand_type,
     price,
     description,
+    seo_title,
+    meta_description,
+    keywords,
   } = await c.req.json();
 
   if (!name || !category_id || price === undefined) {
@@ -538,7 +554,10 @@ productsRoutes.put("/:id", adminAuth, async (c) => {
       brand_type: brand_type || "Non-Branded",
       price,
       description: description || null,
-      // NOTE: We EXPLICITLY do not update the 'slug' here to prevent breaking 
+      seo_title: seo_title || null,
+      meta_description: meta_description || null,
+      keywords: keywords || null,
+      // NOTE: We EXPLICITLY do not update the 'slug' here to prevent breaking
       // existing indexed URLs in Google Search Console.
     })
     .eq("id", id)
