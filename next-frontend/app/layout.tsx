@@ -1,4 +1,5 @@
 import React from 'react';
+import Script from 'next/script';
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Cinzel, Manrope, Great_Vibes } from 'next/font/google';
 import { cookies } from 'next/headers';
@@ -120,6 +121,13 @@ export default async function RootLayout({
         />
       </head>
       <body>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-JJ348CJEDX" strategy="afterInteractive" />
+        <Script id="ga4-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-JJ348CJEDX');
+        `}</Script>
         <CurrencyProvider>
           <SplashGate alreadySeen={alreadySeen}>
             <Navbar categories={categories} groupedSubCategories={groupedSubCategories} />

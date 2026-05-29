@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6 pb-10">
       {/* Cloudflare Analytics Banner */}
       <a
-        href="https://dash.cloudflare.com/7e68f56684af9e04bfba0a4877e418a0/saisatgurutextile.com/analytics/traffic"
+        href="https://analytics.google.com/analytics/web/#/p529373235/reports/intelligenthome"
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl border border-slate-700 hover:border-indigo-500 transition-all group cursor-pointer"
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Live Traffic</p>
-            <p className="text-white font-bold text-base">Cloudflare Analytics</p>
+            <p className="text-white font-bold text-base">Google Analytics</p>
             <p className="text-slate-400 text-xs mt-0.5">Click to open real-time traffic report</p>
           </div>
         </div>
