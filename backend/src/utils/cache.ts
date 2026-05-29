@@ -1,54 +1,68 @@
 import type { Env } from "../types/env";
 
 export const CACHE_TTL = {
-    SHORT: 60, // 1 minute
-    MEDIUM: 3600, // 1 hour (Increased from 5 mins)
-    LONG: 86400, // 24 hours (Increased from 1 hour)
+    SHORT: 300,    // 5 minutes
+    MEDIUM: 3600,  // 1 hour
+    LONG: 86400,   // 24 hours
 };
 
+const CACHE_BASE_URL = "https://cache.internal/";
+
 export async function getCache<T>(
-    env: Env,
+    _env: Env,
     key: string
 ): Promise<T | null> {
     try {
-        const data = await env.CACHE_KV.get(key, "json");
-        if (data) {
-            console.log(`[KV Cache] HIT: ${key}`);
-            return data as T;
+        const cache = caches.default;
+        const response = await cache.match(CACHE_BASE_URL + encodeURIComponent(key));
+        if (response) {
+            return await response.json() as T;
         }
     } catch (error) {
-        console.warn(`[KV Cache] Error reading key ${key}:`, error);
+        console.warn(`[Cache] Error reading key ${key}:`, error);
     }
     return null;
 }
 
 export async function setCache(
-    env: Env,
+    _env: Env,
     key: string,
     value: any,
     ttlSeconds: number = CACHE_TTL.SHORT
 ) {
     try {
-        await env.CACHE_KV.put(key, JSON.stringify(value), {
-            expirationTtl: ttlSeconds,
+        const cache = caches.default;
+        const response = new Response(JSON.stringify(value), {
+            headers: {
+                "Content-Type": "application/json",
+                "Cache-Control": `public, max-age=${ttlSeconds}`,
+            },
         });
-        console.log(`[KV Cache] SET: ${key}`);
+        await cache.put(CACHE_BASE_URL + encodeURIComponent(key), response);
     } catch (error) {
-        console.warn(`[KV Cache] Error writing key ${key}:`, error);
+        console.warn(`[Cache] Error writing key ${key}:`, error);
     }
 }
 
-export async function invalidateCachePattern(env: Env, prefix: string) {
-    // KV list operations are eventually consistent and might be slow
-    // Use with caution or specific keys
+export async function invalidateCachePattern(_env: Env, prefix: string) {
     try {
-        const list = await env.CACHE_KV.list({ prefix });
-        const keys = list.keys.map((k) => k.name);
-        // Batch delete is not directly supported in standard workers types simply
-        // but we can Promise.all
-        await Promise.all(keys.map((key) => env.CACHE_KV.delete(key)));
-        console.log(`[KV Cache] Invalidated ${keys.length} keys for prefix: ${prefix}`);
+        const cache = caches.default;
+
+        if (prefix.startsWith("product:detail:slug:")) {
+            const slug = prefix.replace("product:detail:slug:", "");
+            await Promise.all([
+                cache.delete(CACHE_BASE_URL + encodeURIComponent(`product:detail:slug:${slug}:public:full`)),
+                cache.delete(CACHE_BASE_URL + encodeURIComponent(`product:detail:slug:${slug}:admin:full`)),
+            ]);
+        } else if (prefix.startsWith("product:detail:")) {
+            const id = prefix.replace("product:detail:", "");
+            await Promise.all([
+                cache.delete(CACHE_BASE_URL + encodeURIComponent(`product:detail:${id}:public`)),
+                cache.delete(CACHE_BASE_URL + encodeURIComponent(`product:detail:${id}:admin`)),
+            ]);
+        }
+        // products:list entries expire via their 5-min TTL — Cache API cannot enumerate keys
     } catch (error) {
-        console.warn(`[KV Cache] Error invalidating prefix ${prefix}:`, error);
+        console.warn(`[Cache] Error invalidating prefix ${prefix}:`, error);
     }
 }

@@ -4,6 +4,8 @@ import {
   MessageSquare,
   CheckCircle,
   TrendingUp,
+  ExternalLink,
+  Activity,
 } from "lucide-react";
 import { useDashboardStats } from "../services/queries";
 import {
@@ -54,6 +56,32 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-10">
+      {/* Cloudflare Analytics Banner */}
+      <a
+        href="https://dash.cloudflare.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl border border-slate-700 hover:border-indigo-500 transition-all group cursor-pointer"
+      >
+        <div className="flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+            <Activity className="w-5 h-5 text-indigo-400" />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Live Traffic</p>
+            <p className="text-white font-bold text-base">Cloudflare Analytics</p>
+            <p className="text-slate-400 text-xs mt-0.5">Click to open real-time traffic report</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-1 rounded-full">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            LIVE
+          </span>
+          <ExternalLink className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+        </div>
+      </a>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <Card

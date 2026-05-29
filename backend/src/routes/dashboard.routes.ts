@@ -8,14 +8,18 @@ export const dashboardRoutes = new Hono<{ Bindings: Env; Variables: Variables }>
 dashboardRoutes.get("/", adminAuth, async (c) => {
   const supabase = getSupabaseAdmin(c.env);
 
-  /* Total real visitors (from KV – matches trackVisitor middleware) */
-  const totalVisitorsRaw = await c.env.CACHE_KV.get("visitors:total");
-  const totalVisitors = totalVisitorsRaw ? parseInt(totalVisitorsRaw) : 0;
-
-  /* Today's visitors (from KV) */
   const today = new Date().toISOString().split("T")[0];
-  const todayVisitorsRaw = await c.env.CACHE_KV.get(`visitors:daily:${today}`);
-  const todayVisitors = todayVisitorsRaw ? parseInt(todayVisitorsRaw) : 0;
+
+  /* Total visitors (from Supabase visitor_sessions) */
+  const { count: totalVisitors } = await supabase
+    .from("visitor_sessions")
+    .select("hash", { count: "exact", head: true });
+
+  /* Today's visitors */
+  const { count: todayVisitors } = await supabase
+    .from("visitor_sessions")
+    .select("hash", { count: "exact", head: true })
+    .eq("date", today);
 
   /* Total enquiries */
   const { count: totalEnquiries } = await supabase
@@ -72,7 +76,7 @@ dashboardRoutes.get("/", adminAuth, async (c) => {
   return c.json({
     success: true,
     totalVisitors: totalVisitors ?? 0,
-    todayVisitors: todayVisitors ?? 0,
+    todayVisitors: (todayVisitors as number | null) ?? 0,
     totalEnquiries: totalEnquiries ?? 0,
     convertedLeads: convertedLeads ?? 0,
     enquiryTrend,
