@@ -100,7 +100,10 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
     img.src = optimizedImageUrl(activeImage, 'main');
     const handleLoad = () => setImageLoaded(true);
     if (img.complete) handleLoad();
-    else img.onload = handleLoad;
+    else {
+      img.onload = handleLoad;
+      img.onerror = handleLoad;
+    }
     
     return () => clearTimeout(t);
   }, [activeImage]);
@@ -196,9 +199,8 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
             src={optimizedImageUrl(activeImage, 'main')}
             alt={productName}
             draggable={false}
-            // CRITICAL: Hero image must be prioritized by the browser immediately.
+            onError={(e) => { e.currentTarget.src = activeImage; }}
             {...(activeImage === images[0] ? { fetchPriority: 'high', loading: 'eager' } : { loading: 'lazy' })}
-            // Remove opacity-0 for the first image so it shows even before JS cycles.
             className={`max-w-full max-h-[85vh] h-auto w-auto object-contain select-none transition-opacity duration-500 relative z-10 ${activeImage === images[0] ? 'opacity-100' : (imageLoaded ? 'opacity-100' : 'opacity-0')}`}
             onClick={() => !isSwiping.current && setIsLightboxOpen(true)}
           />
@@ -226,7 +228,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                   onClick={() => !mainHasDragged && setActiveImage(img)}
                   className={`relative h-14 md:h-20 aspect-[3/4] flex-shrink-0 overflow-hidden border rounded-sm transition duration-150 active:scale-95 ${activeImage === img ? 'border-[#d4af37] ring-2 ring-[#d4af37] shadow-[0_0_10px_rgba(255,215,0,0.3)]' : 'border-white/10 opacity-50 hover:opacity-100'}`}
                 >
-                  <img src={optimizedImageUrl(img, 'thumbnail')} alt="" className="w-full h-full object-contain pointer-events-none" />
+                  <img src={optimizedImageUrl(img, 'thumbnail')} alt="" onError={(e) => { e.currentTarget.src = img; }} className="w-full h-full object-contain pointer-events-none" />
                 </button>
               ))}
             </div>
@@ -257,6 +259,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
               src={optimizedImageUrl(activeImage, 'full')}
               alt={productName}
               draggable={false}
+              onError={(e) => { e.currentTarget.src = activeImage; }}
               className="max-w-full max-h-full object-contain"
               onClick={(e) => e.stopPropagation()}
             />
@@ -286,7 +289,7 @@ export const ProductGallery: React.FC<ProductGalleryProps> = ({ images, productN
                   onClick={() => !lbxHasDragged && setActiveImage(img)}
                   className={`h-16 w-12 shrink-0 rounded border transition-all overflow-hidden ${activeImage === img ? 'border-[#d4af37] opacity-100' : 'border-white/10 opacity-40'}`}
                 >
-                  <img src={optimizedImageUrl(img, 'thumbnail')} alt="" className="w-full h-full object-cover" />
+                  <img src={optimizedImageUrl(img, 'thumbnail')} alt="" onError={(e) => { e.currentTarget.src = img; }} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
