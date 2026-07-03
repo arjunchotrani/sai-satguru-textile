@@ -11,7 +11,7 @@ import { CurrencyProvider } from '../components/CurrencyContext';
 import { fetchCategories, fetchSubCategories } from '../lib/api';
 import { SubCategory } from '../lib/types';
 import './globals.css';
-import { generateOrganizationSchema } from '../lib/schema';
+import { generateOrganizationSchema, generateLocalBusinessSchema } from '../lib/schema';
 
 // ─── Google Fonts (self-hosted by Next.js, preloaded, zero layout shift) ───
 const playfair = Playfair_Display({
@@ -70,6 +70,12 @@ export const metadata: Metadata = {
     type: 'website',
     images: ['/logo-512.png'],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sai Satguru Textile | Wholesale Manufacturer Surat',
+    description: 'Premium wholesale textile manufacturer in Surat. Specializing in Kurtis, Sarees, Lehengas, and Catalog Brands.',
+    images: ['/logo-512.png'],
+  },
 };
 
 
@@ -100,6 +106,7 @@ export default async function RootLayout({
   });
 
   const orgSchema = generateOrganizationSchema();
+  const localBusinessSchema = generateLocalBusinessSchema();
 
   // Compose font class string once
   const fontClasses = [
@@ -118,6 +125,10 @@ export default async function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
         />
       </head>
       <body>

@@ -1,5 +1,22 @@
 export const revalidate = 300;
+import type { Metadata } from 'next';
 import React from "react";
+
+export const metadata: Metadata = {
+  title: 'Wholesale Textile Supplier in Surat | Sai Satguru Textile',
+  description: 'Premium wholesale manufacturer in Surat — Kurtis, Sarees, Lehengas & Catalog Brands at unbeatable wholesale prices. Direct from India\'s textile capital.',
+  openGraph: {
+    title: 'Wholesale Textile Supplier in Surat | Sai Satguru Textile',
+    description: 'Premium wholesale manufacturer in Surat — Kurtis, Sarees, Lehengas & Catalog Brands at unbeatable wholesale prices.',
+    images: ['/logo-512.png'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Wholesale Textile Supplier in Surat | Sai Satguru Textile',
+    description: 'Premium wholesale manufacturer in Surat — Kurtis, Sarees, Lehengas & Catalog Brands at unbeatable wholesale prices.',
+    images: ['/logo-512.png'],
+  },
+};
 import Link from 'next/link';
 import { ShieldCheck, MessageCircle, ArrowRight } from "lucide-react";
 import { ProductCard } from "../components/ProductCard";
@@ -46,14 +63,14 @@ export default async function Home() {
         </div>
 
         <div className="relative z-10 text-center w-full max-w-4xl px-6">
-          <h1 className="text-[#d4af37] text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] font-bold mb-4 md:mb-6 reveal-text reveal-text-1 break-words">
+          <p className="text-[#d4af37] text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] font-bold mb-4 md:mb-6 reveal-text reveal-text-1 break-words">
             Wholesale Textile Supplier in Surat
-          </h1>
+          </p>
 
-          <h2 className="font-serif text-4xl md:text-7xl mb-5 md:mb-8 leading-tight break-words reveal-text reveal-text-2">
+          <h1 className="font-serif text-4xl md:text-7xl mb-5 md:mb-8 leading-tight break-words reveal-text reveal-text-2">
             From Surat <br />
             <span className="text-gradient-gold">to the World</span>
-          </h2>
+          </h1>
 
           <p className="text-white/60 mb-10 md:mb-12 text-xs md:text-base max-w-2xl mx-auto leading-relaxed px-2 reveal-text reveal-text-3 font-light">
             Your trusted partner for premium wholesale sarees, dress materials, and kurtis. Sourced from India&apos;s textile capital.

@@ -6,6 +6,7 @@ import { ChevronRight, AlignLeft, ChevronLeft } from 'lucide-react';
 import { ProductCard } from '../../../components/ProductCard';
 import { CategoryUI } from '../../../components/CategoryUI';
 import { fetchCategoryBySlug, fetchProducts, fetchBrands, fetchCategories, fetchSubCategories } from '../../../lib/api';
+import { generateFaqSchema } from '../../../lib/schema';
 import { Category, SubCategory, Brand } from '../../../lib/types';
 import type { Metadata } from 'next';
 
@@ -128,6 +129,25 @@ export default async function CategoryPage({
         return `/category/${categorySlug}${qs ? `?${qs}` : ''}`;
     };
 
+    const categoryFaqSchema = generateFaqSchema([
+        {
+            question: `What is the minimum order quantity for wholesale ${naturalName}?`,
+            answer: `Sai Satguru Textile offers flexible minimum order quantities on our ${naturalName} range, designed to support boutiques and retailers of all sizes. Contact us on WhatsApp for current MOQ details.`
+        },
+        {
+            question: `Do you ship ${naturalName} internationally?`,
+            answer: `Yes, we ship our ${naturalName} collection worldwide. We have streamlined export documentation and logistics partnerships to ensure timely delivery to 20+ countries.`
+        },
+        {
+            question: `What is the price range for wholesale ${naturalName} from Sai Satguru Textile?`,
+            answer: `Our wholesale ${naturalName} prices vary based on fabric, design, and quantity. We offer competitive pricing direct from Surat's manufacturers. Contact us for a current price list and catalogue.`
+        },
+        {
+            question: `How can I place a bulk order for ${naturalName}?`,
+            answer: `You can place bulk orders by contacting us directly on WhatsApp (+91 8200103821) or through our enquiry form. Our team will provide you with catalogue options, pricing, and availability.`
+        }
+    ]);
+
     return (
         <div className="bg-black min-h-screen pt-32 pb-24 text-white animate-reveal">
             <script
@@ -140,6 +160,10 @@ export default async function CategoryPage({
                         { '@type': 'ListItem', position: 2, name: title, item: `https://saisatgurutextile.com/category/${categorySlug}` },
                     ],
                 }) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(categoryFaqSchema) }}
             />
             <div className="container mx-auto px-6 md:px-12 text-left">
                 {/* Breadcrumb */}

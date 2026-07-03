@@ -34,6 +34,13 @@ export async function generateMetadata({
       title,
       description,
       type: 'website',
+      images: ['/logo-512.png'],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/logo-512.png'],
     },
   };
 }

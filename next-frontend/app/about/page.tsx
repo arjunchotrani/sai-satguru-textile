@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Gem, Handshake, Truck, ChevronRight } from 'lucide-react';
 import { CONTACT_INFO } from '../../lib/constants';
+import { generateOrganizationSchema } from '../../lib/schema';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,8 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const orgSchema = generateOrganizationSchema();
+
   return (
     <div className="bg-black min-h-screen pt-28 md:pt-36 pb-12 text-white overflow-x-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
       
       {/* HERO SECTION */}
       <div className="container mx-auto px-4 lg:px-8 mb-24 relative">

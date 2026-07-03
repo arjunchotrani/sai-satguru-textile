@@ -3,6 +3,7 @@ import React from 'react';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { CONTACT_INFO } from '../../lib/constants';
 import { ContactForm } from '../../components/ContactForm';
+import { generateLocalBusinessSchema } from '../../lib/schema';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,8 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default function ContactPage() {
+  const localBusinessSchema = generateLocalBusinessSchema();
+
   return (
     <div className="min-h-screen bg-black pt-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
       <div className="py-20 text-center text-white mb-16 border-b border-white/10 animate-in fade-in duration-700">
         <h1 className="font-serif text-4xl md:text-5xl mb-4">Contact Our Showroom</h1>
         <p className="text-white/40 max-w-xl mx-auto italic font-light">
