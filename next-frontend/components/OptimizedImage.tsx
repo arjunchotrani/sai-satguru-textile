@@ -1,11 +1,12 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import Image from 'next/image';
 
 interface OptimizedImageProps {
     src: string;
     alt: string;
     className?: string;
-    aspectRatio?: string; // e.g. "3/4"
+    aspectRatio?: string;
     priority?: boolean;
 }
 
@@ -16,7 +17,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     aspectRatio = "3/4",
     priority = false,
 }) => {
-    if (!src) {
+    const [errored, setErrored] = useState(false);
+
+    if (!src || errored) {
         return (
             <div
                 className={`relative overflow-hidden bg-neutral-900 ${className}`}
@@ -29,8 +32,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         );
     }
 
-    // Next.js config optimization over wsrv.nl proxy URL
-    // We can rely entirely on standard unoptimized next/image OR use the precomputed image URL as src
     return (
         <div
             className={`relative overflow-hidden bg-neutral-900 ${className}`}
@@ -40,10 +41,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
                 src={src}
                 alt={alt}
                 fill
-                className={`object-contain`}
+                className="object-contain"
                 priority={priority}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                unoptimized // Use wsrv.nl's output directly instead of passing through _next/image processing to save Vercel/Cloudflare compute
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                onError={() => setErrored(true)}
             />
         </div>
     );
