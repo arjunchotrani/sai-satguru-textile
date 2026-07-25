@@ -20,6 +20,8 @@ export default function SearchArea() {
     const [hasError, setHasError] = useState(false);
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const routerRef = useRef(router);
+    useEffect(() => { routerRef.current = router; }, [router]);
 
     const performSearch = useCallback(async (q: string) => {
         // Cancel any in-flight request
@@ -69,20 +71,17 @@ export default function SearchArea() {
         }
     }, []);
 
-    // Debounced URL updates on typing
+    // Debounce: search directly, update URL for shareability only
     useEffect(() => {
         if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
         debounceTimeout.current = setTimeout(() => {
             const trimmed = searchTerm.trim();
             if (trimmed) {
-                if (searchParams.get('q') !== trimmed) {
-                    const newParams = new URLSearchParams(searchParams.toString());
-                    newParams.set('q', trimmed);
-                    router.replace(`/search?${newParams.toString()}`);
-                }
+                routerRef.current.replace(`/search?q=${encodeURIComponent(trimmed)}`);
+                performSearch(trimmed);
             } else {
-                if (searchParams.get('q')) router.replace('/search');
+                routerRef.current.replace('/search');
                 setProducts([]);
                 setSearched(false);
                 setHasError(false);
@@ -90,14 +89,13 @@ export default function SearchArea() {
         }, 500);
 
         return () => { if (debounceTimeout.current) clearTimeout(debounceTimeout.current); };
-    }, [searchTerm, searchParams, router]);
+    }, [searchTerm, performSearch]);
 
-    // Run search when URL query param changes
+    // Run search on direct navigation (e.g. page load with ?q=)
     useEffect(() => {
-        if (query) {
-            performSearch(query);
-        }
-    }, [query, performSearch]);
+        if (query) performSearch(query);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="bg-black min-h-screen pt-24 md:pt-36 pb-12 text-white">
