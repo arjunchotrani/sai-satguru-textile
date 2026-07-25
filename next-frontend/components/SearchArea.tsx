@@ -20,6 +20,7 @@ export default function SearchArea() {
     const [hasError, setHasError] = useState(false);
     const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const isInternalNavigation = useRef(false);
 
     const performSearch = useCallback(async (q: string) => {
         // Cancel any in-flight request
@@ -79,6 +80,7 @@ export default function SearchArea() {
                 if (searchParams.get('q') !== trimmed) {
                     const newParams = new URLSearchParams(searchParams.toString());
                     newParams.set('q', trimmed);
+                    isInternalNavigation.current = true;
                     router.replace(`/search?${newParams.toString()}`);
                 }
             } else {
@@ -95,7 +97,10 @@ export default function SearchArea() {
     // Run search when URL query param changes
     useEffect(() => {
         if (query) {
-            setSearchTerm(query);
+            if (!isInternalNavigation.current) {
+                setSearchTerm(query);
+            }
+            isInternalNavigation.current = false;
             performSearch(query);
         }
     }, [query, performSearch]);
