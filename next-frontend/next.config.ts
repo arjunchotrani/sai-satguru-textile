@@ -15,8 +15,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'pub-*.r2.dev', // Cloudflare R2 pattern
-      }
+        hostname: 'pub-*.r2.dev',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wsrv.nl',
+      },
     ],
   },
 };
