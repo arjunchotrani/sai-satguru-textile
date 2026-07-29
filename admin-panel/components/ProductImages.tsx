@@ -60,8 +60,9 @@ const ProductImages: React.FC<Props> = ({ productId }) => {
     if (file.type.startsWith("image/")) {
       try {
         const options = {
-          maxSizeMB: 0.8, // Compress to ~800KB
-          maxWidthOrHeight: 1920,
+          maxSizeMB: 0.4,
+          maxWidthOrHeight: 1600,
+          fileType: 'image/webp',
           useWebWorker: true,
         };
         fileToUpload = await imageCompression(file, options);
