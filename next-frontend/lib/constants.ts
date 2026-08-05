@@ -102,11 +102,11 @@ export const CURRENCIES: Currency[] = [
 
 export const CONTACT_INFO = {
   phone: '+91 8200103821',
-  phone2: '+91 9898934532',
+  phone2: '+91 8200103821',
   email: 'Saisatgurutextile@gmail.com',
   address: `Sai Satguru Textile, LOWER GROUND-504 NEW SHREE RAM MARKET, OPP MANISH MARKET, MAA ARORA KACHORI DOWN STAIRS, RING ROAD - SURAT - 395002 GUJARAT INDIA`,
   whatsapp1: '+918200103821',
-  whatsapp2: '+919898934532',
+  whatsapp2: '+918200103821',
   whatsappCommunity: 'https://chat.whatsapp.com/HeQicmjbgvABPvgB3hDBhW',
   instagram: 'https://www.instagram.com/sai_satguru_textile/',
   facebook: 'https://www.facebook.com/saisatgurutextile'

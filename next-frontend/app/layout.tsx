@@ -2,7 +2,6 @@ import React from 'react';
 import Script from 'next/script';
 import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Cinzel, Manrope, Great_Vibes } from 'next/font/google';
-import { cookies } from 'next/headers';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { WhatsAppWidget } from '../components/WhatsAppWidget';
@@ -116,12 +115,11 @@ export default async function RootLayout({
     greatVibes.variable,
   ].join(' ');
 
-  const cookieStore = await cookies();
-  const alreadySeen = cookieStore.get('sst_splash_v5')?.value === 'true';
-
   return (
     <html lang="en" className={`no-scrollbar ${fontClasses}`} suppressHydrationWarning>
       <head>
+        {/* Runs before first paint: marks returning visitors so SplashGate skips the animation without a flash */}
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{if(sessionStorage.getItem('sst_splash_v5')==='true'){document.documentElement.classList.add('splash-seen');}}catch(e){}})();` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
@@ -140,7 +138,7 @@ export default async function RootLayout({
           gtag('config', 'G-JJ348CJEDX');
         `}</Script>
         <CurrencyProvider>
-          <SplashGate alreadySeen={alreadySeen}>
+          <SplashGate>
             <Navbar categories={categories} groupedSubCategories={groupedSubCategories} />
             <WhatsAppWidget />
             <main>
