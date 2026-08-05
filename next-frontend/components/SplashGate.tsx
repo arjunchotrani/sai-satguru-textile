@@ -10,34 +10,33 @@ interface SplashGateProps {
 }
 
 export const SplashGate: React.FC<SplashGateProps> = ({ children }) => {
-  // The inline blocking script in <head> sets 'splash-seen' on <html> before
-  // first paint for returning visitors, so this initializer runs with the
-  // correct DOM state in the browser — no flash-of-splash.
-  const [phase, setPhase] = useState<'splash' | 'fading' | 'done'>(() => {
-    if (typeof window === 'undefined') return 'splash';
-    return document.documentElement.classList.contains('splash-seen') ? 'done' : 'splash';
-  });
+  const [phase, setPhase] = useState<'splash' | 'fading' | 'done'>('splash');
 
-  // Detect reload and session-storage flag
+  // Runs once on mount: check for reload, session flag, or inline-script class.
+  // The inline <head> script sets 'splash-seen' on <html> before first paint for
+  // returning visitors, so this useEffect catches it before any timer fires.
   useEffect(() => {
-    if (phase === 'done') return;
     const [nav] = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
     const isReload = nav?.type === 'reload';
     const hasSeenInSession = sessionStorage.getItem(SPLASH_COOKIE_NAME);
-    if (isReload || hasSeenInSession) {
+    const alreadySeen = document.documentElement.classList.contains('splash-seen');
+    if (isReload || hasSeenInSession || alreadySeen) {
       setPhase('done');
-      return;
     }
+  }, []);
 
+  // Start the dismiss timer only while in 'splash'. If phase is anything else
+  // (e.g. 'done' set by the effect above), this is a no-op.
+  useEffect(() => {
+    if (phase !== 'splash') return;
     const fadeTimer = setTimeout(() => {
       setPhase('fading');
       try { sessionStorage.setItem(SPLASH_COOKIE_NAME, 'true'); } catch (e) {}
     }, 1250);
-
     return () => clearTimeout(fadeTimer);
   }, [phase]);
 
-  // Fade-out transition
+  // Fade-out transition.
   useEffect(() => {
     if (phase !== 'fading') return;
     const doneTimer = setTimeout(() => setPhase('done'), 600);
