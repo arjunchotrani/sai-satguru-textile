@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 import Link from 'next/link';
 import { ShieldCheck, MessageCircle, ArrowRight } from "lucide-react";
 import { ProductCard } from "../components/ProductCard";
+import { Hero } from "../components/Hero";
 import { CONTACT_INFO } from "../lib/constants";
 import { fetchNewArrivals } from "../lib/api";
 
@@ -53,45 +54,7 @@ export default async function Home() {
 
   return (
     <div className="bg-black min-h-screen text-white overflow-x-hidden">
-      {/* HERO SECTION - Premium Pure CSS Overlays */}
-      <section className="relative min-h-[60vh] md:h-[90vh] flex items-center justify-center pt-32 pb-16 md:pt-0 md:pb-0 overflow-hidden">
-        {/* Luxury Text Marquee */}
-        <div className="marquee-container">
-          <div className="marquee-content">
-            SAI SATGURU TEXTILE • ESTABLISHED IN SURAT • PREMIUM WHOLESALE • 
-          </div>
-        </div>
-
-        <div className="relative z-10 text-center w-full max-w-4xl px-6">
-          <p className="text-[#d4af37] text-[9px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] font-bold mb-4 md:mb-6 reveal-text reveal-text-1 break-words">
-            Wholesale Textile Supplier in Surat
-          </p>
-
-          <h1 className="font-serif text-4xl md:text-7xl mb-5 md:mb-8 leading-tight break-words reveal-text reveal-text-2">
-            From Surat <br />
-            <span className="text-gradient-gold">to the World</span>
-          </h1>
-
-          <p className="text-white/60 mb-10 md:mb-12 text-xs md:text-base max-w-2xl mx-auto leading-relaxed px-2 reveal-text reveal-text-3 font-light">
-            Your trusted partner for premium wholesale sarees, dress materials, and kurtis. Sourced from India&apos;s textile capital.
-          </p>
-
-          <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 w-full max-w-xs md:max-w-none mx-auto reveal-text reveal-text-4">
-            <Link
-              href="/new-arrivals"
-              className="glass-btn glass-btn-gold text-white px-8 py-4 md:py-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-all rounded-sm"
-            >
-              View Latest Collections
-            </Link>
-            <Link
-              href="/contact"
-              className="glass-btn text-white px-8 py-4 md:py-4 text-xs md:text-sm font-bold uppercase tracking-widest transition-all rounded-sm"
-            >
-              Contact Surat Showroom
-            </Link>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* SEO CONTENT SECTION - Minimal & Clean */}
       <section className="py-12 md:py-16 bg-[#050505] border-b border-white/5">

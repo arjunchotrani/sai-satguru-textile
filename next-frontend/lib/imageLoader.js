@@ -1,5 +1,10 @@
 export default function imageLoader({ src, width, quality }) {
   const q = quality || 72;
+  // Local /public assets (e.g. static hero images) — serve directly, wsrv.nl
+  // can't proxy a relative path since it has no host to fetch from.
+  if (src.startsWith('/')) {
+    return src;
+  }
   if (src.startsWith('https://wsrv.nl/')) {
     // Already routed through wsrv.nl — update w/q to Next.js-computed values
     const url = new URL(src);
